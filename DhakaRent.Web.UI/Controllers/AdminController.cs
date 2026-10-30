@@ -9,7 +9,7 @@ namespace DhakaRent.Web.UI.Controllers
     {
         public IActionResult Dashboard()
         {
-            return Content("Welcome to Admin Dashboard!");
+            return View();
         }
     }
 }

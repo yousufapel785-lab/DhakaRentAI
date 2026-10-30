@@ -1,0 +1,111 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">Admin Dashboard</h2>
+        <p class="text-muted">
+            Welcome to DhakaRent AI Administration Panel.
+        </p>
+    </div>
+
+    <!-- Dashboard Summary Cards -->
+    <div class="row g-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Users</h6>
+                    <h2 class="fw-bold">0</h2>
+                    <span class="text-muted">Registered users</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Properties</h6>
+                    <h2 class="fw-bold">0</h2>
+                    <span class="text-muted">All property listings</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Pending Approvals</h6>
+                    <h2 class="fw-bold text-warning">0</h2>
+                    <span class="text-muted">Awaiting admin review</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Reports</h6>
+                    <h2 class="fw-bold text-danger">0</h2>
+                    <span class="text-muted">Reported listings</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-5">
+        <h4 class="fw-bold mb-3">Quick Actions</h4>
+
+        <div class="row g-3">
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5>Property Approvals</h5>
+                        <p class="text-muted">
+                            Review and manage submitted property listings.
+                        </p>
+                        <button class="btn btn-primary" disabled>
+                            Coming Soon
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5>User Management</h5>
+                        <p class="text-muted">
+                            View and manage Tenant and PropertyOwner accounts.
+                        </p>
+                        <button class="btn btn-primary" disabled>
+                            Coming Soon
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5>Listing Reports</h5>
+                        <p class="text-muted">
+                            Review reports submitted by platform users.
+                        </p>
+                        <button class="btn btn-primary" disabled>
+                            Coming Soon
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
