@@ -1,6 +1,7 @@
 
 using DhakaRent.DataAccess.Context;
 using DhakaRent.DataAccess.Identity;
+using DhakaRent.Web.UI.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +33,22 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// 4. HTTP Request Pipeline
+// 4. Seed Roles and Admin Account
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var roleManager =
+        services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    // Create default roles first
+    await RoleSeeder.SeedRolesAsync(roleManager);
+}
+
+// Create Admin account and assign Admin role
+await AdminSeeder.SeedAsync(app.Services, app.Configuration);
+
+// 5. HTTP Request Pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -48,7 +64,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 5. Default MVC Route
+// 6. Default MVC Route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
