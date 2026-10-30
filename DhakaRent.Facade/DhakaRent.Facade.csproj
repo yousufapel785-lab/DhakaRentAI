@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DhakaRent.Entities\DhakaRent.Entities.csproj" />
+    <ProjectReference Include="..\DhakaRent.Framework\DhakaRent.Framework.csproj" />
+  </ItemGroup>
+
 </Project>
