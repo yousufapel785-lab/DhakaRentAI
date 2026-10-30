@@ -1,0 +1,6 @@
+@DhakaRent.Web.API_HostAddress = http://localhost:5088
+
+GET {{DhakaRent.Web.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

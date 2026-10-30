@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/1.Library/">
+    <Project Path="DhakaRent.DataAccess/DhakaRent.DataAccess.csproj" />
+    <Project Path="DhakaRent.Entities/DhakaRent.Entities.csproj" />
+    <Project Path="DhakaRent.Framework/DhakaRent.Framework.csproj" />
+  </Folder>
+  <Folder Name="/2.BusinessLogic/">
+    <Project Path="DhakaRent.Facade/DhakaRent.Facade.csproj" />
+  </Folder>
+  <Folder Name="/3.ThirdParty/" />
+  <Folder Name="/4.API/">
+    <Project Path="DhakaRent.Web.API/DhakaRent.Web.API.csproj" Id="07995438-cf79-4d5e-b361-7efff3db2af6" />
+  </Folder>
+  <Folder Name="/5.Presentation/">
+    <Project Path="DhakaRent.Web.UI/DhakaRent.Web.UI.csproj" />
+  </Folder>
+</Solution>
