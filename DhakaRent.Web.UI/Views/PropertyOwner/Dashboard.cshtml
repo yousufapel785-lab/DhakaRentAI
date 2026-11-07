@@ -1,0 +1,152 @@
+﻿@model DhakaRent.Web.UI.ViewModels.PropertyOwnerDashboardViewModel
+
+@{
+    ViewData["Title"] = "Property Owner Dashboard";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Property Owner Dashboard</h2>
+
+        <a asp-controller="PropertyOwner"
+           asp-action="CreateProperty"
+           class="btn btn-primary">
+            + Add New Property
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- Dashboard Statistics -->
+    <div class="row mb-4">
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Total Properties</h6>
+                    <h2>@Model.TotalProperties</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Pending Approval</h6>
+                    <h2>@Model.PendingProperties</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Approved Properties</h6>
+                    <h2>@Model.ApprovedProperties</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Rejected Properties</h6>
+                    <h2>@Model.RejectedProperties</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Property List -->
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">My Submitted Properties</h5>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.Properties.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Property</th>
+                                <th>Area</th>
+                                <th>Monthly Rent</th>
+                                <th>Status</th>
+                                <th>Submitted Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var property in Model.Properties)
+                            {
+                                <tr>
+                                    <td>@property.Id</td>
+                                    <td>@property.Title</td>
+                                    <td>@property.Area</td>
+                                    <td>৳ @property.MonthlyRent.ToString("N2")</td>
+                                    <td>
+                                        @if (property.ListingStatus == "Pending")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                Pending
+                                            </span>
+                                        }
+                                        else if (property.ListingStatus == "Approved")
+                                        {
+                                            <span class="badge bg-success">
+                                                Approved
+                                            </span>
+                                        }
+                                        else if (property.ListingStatus == "Rejected")
+                                        {
+                                            <span class="badge bg-danger">
+                                                Rejected
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @property.ListingStatus
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>@property.CreatedAt.ToString("dd MMM yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <h5>No Properties Found</h5>
+                    <p class="text-muted">
+                        You haven't submitted any properties yet.
+                    </p>
+
+                    <a asp-controller="PropertyOwner"
+                       asp-action="CreateProperty"
+                       class="btn btn-primary">
+                        Submit Your First Property
+                    </a>
+                </div>
+            }
+
+        </div>
+    </div>
+
+</div>
