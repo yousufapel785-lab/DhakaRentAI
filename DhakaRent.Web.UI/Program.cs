@@ -1,11 +1,17 @@
 
+using DhakaRent.Facade.Services;
 using DhakaRent.DataAccess.Context;
 using DhakaRent.DataAccess.Identity;
+using DhakaRent.DataAccess.Repositories;
+using DhakaRent.Facade.Interfaces;
 using DhakaRent.Web.UI.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+// Repository Dependency Injection
+builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
+builder.Services.AddScoped<IPropertyFacade, PropertyFacade>();
 
 // 1. Database Connection
 var connectionString = builder.Configuration

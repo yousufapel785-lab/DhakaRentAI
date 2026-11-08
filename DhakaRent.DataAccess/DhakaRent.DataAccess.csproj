@@ -26,4 +26,8 @@
     <ProjectReference Include="..\DhakaRent.Framework\DhakaRent.Framework.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\Interfaces\" />
+  </ItemGroup>
+
 </Project>
