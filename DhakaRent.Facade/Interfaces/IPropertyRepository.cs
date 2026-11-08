@@ -1,4 +1,5 @@
 ﻿
+using DhakaRent.Entities.Enums;
 using DhakaRent.Entities.Models;
 
 namespace DhakaRent.Facade.Interfaces
@@ -7,10 +8,12 @@ namespace DhakaRent.Facade.Interfaces
     {
         Task<Property?> GetByIdAsync(int id);
 
+
         Task<IEnumerable<Property>> GetAllAsync();
 
         Task<IEnumerable<Property>> GetByOwnerIdAsync(string ownerId);
-
+        Task<IEnumerable<Property>> GetByStatusAsync(
+    ListingStatus status);
         Task AddAsync(Property property);
 
         void Update(Property property);

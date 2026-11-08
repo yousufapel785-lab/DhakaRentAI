@@ -1,4 +1,5 @@
 ﻿
+using DhakaRent.Entities.Enums;
 using DhakaRent.Entities.Models;
 using DhakaRent.Facade.Interfaces;
 
@@ -58,6 +59,56 @@ namespace DhakaRent.Facade.Services
 
             _propertyRepository.Delete(property);
             await _propertyRepository.SaveChangesAsync();
+        }
+        public async Task<IEnumerable<Property>> GetPropertiesByStatusAsync(
+    ListingStatus status)
+        {
+            return await _propertyRepository.GetByStatusAsync(status);
+        }
+        public async Task<bool> ApprovePropertyAsync(int id)
+        {
+            var property = await _propertyRepository.GetByIdAsync(id);
+
+            if (property == null ||
+                property.ListingStatus != ListingStatus.Pending)
+            {
+                return false;
+            }
+
+            property.ListingStatus = ListingStatus.Approved;
+            property.RejectionReason = null;
+            property.UpdatedAt = DateTime.UtcNow;
+
+            _propertyRepository.Update(property);
+
+            await _propertyRepository.SaveChangesAsync();
+
+            return true;
+        }
+        public async Task<bool> RejectPropertyAsync(int id, string reason)
+        {
+            if (string.IsNullOrWhiteSpace(reason))
+            {
+                return false;
+            }
+
+            var property = await _propertyRepository.GetByIdAsync(id);
+
+            if (property == null ||
+                property.ListingStatus != ListingStatus.Pending)
+            {
+                return false;
+            }
+
+            property.ListingStatus = ListingStatus.Rejected;
+            property.RejectionReason = reason.Trim();
+            property.UpdatedAt = DateTime.UtcNow;
+
+            _propertyRepository.Update(property);
+
+            await _propertyRepository.SaveChangesAsync();
+
+            return true;
         }
     }
 }

@@ -1,8 +1,9 @@
 ﻿
 using DhakaRent.DataAccess.Context;
+using DhakaRent.Entities.Enums;
 using DhakaRent.Entities.Models;
-using Microsoft.EntityFrameworkCore;
 using DhakaRent.Facade.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DhakaRent.DataAccess.Repositories
 {
@@ -39,7 +40,15 @@ namespace DhakaRent.DataAccess.Repositories
                 .Where(p => p.OwnerId == ownerId)
                 .ToListAsync();
         }
-
+        public async Task<IEnumerable<Property>> GetByStatusAsync(
+    ListingStatus status)
+        {
+            return await _context.Properties
+                .AsNoTracking()
+                .Where(p => p.ListingStatus == status)
+                .OrderBy(p => p.CreatedAt)
+                .ToListAsync();
+        }
         // Add a new property
         public async Task AddAsync(Property property)
         {
