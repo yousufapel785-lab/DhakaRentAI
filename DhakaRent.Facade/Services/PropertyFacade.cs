@@ -110,5 +110,37 @@ namespace DhakaRent.Facade.Services
 
             return true;
         }
+
+        public async Task<IEnumerable<Property>> SearchApprovedPropertiesAsync(
+            string? area,
+            PropertyType? propertyType,
+            decimal? minRent,
+            decimal? maxRent,
+            int? bedrooms)
+        {
+            // Validate the rent range
+            if (minRent.HasValue && minRent.Value < 0)
+                throw new ArgumentException("Minimum rent cannot be negative.");
+
+            if (maxRent.HasValue && maxRent.Value < 0)
+                throw new ArgumentException("Maximum rent cannot be negative.");
+
+            if (minRent.HasValue && maxRent.HasValue &&
+                minRent.Value > maxRent.Value)
+                throw new ArgumentException(
+                    "Minimum rent cannot be greater than maximum rent.");
+
+            if (bedrooms.HasValue && bedrooms.Value < 0)
+                throw new ArgumentException("Bedrooms cannot be negative.");
+
+            // Delegate database filtering to Repository
+            return await _propertyRepository.SearchApprovedPropertiesAsync(
+                area,
+                propertyType,
+                minRent,
+                maxRent,
+                bedrooms);
+        }
+
     }
 }

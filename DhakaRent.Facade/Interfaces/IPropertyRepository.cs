@@ -8,12 +8,11 @@ namespace DhakaRent.Facade.Interfaces
     {
         Task<Property?> GetByIdAsync(int id);
 
-
         Task<IEnumerable<Property>> GetAllAsync();
 
         Task<IEnumerable<Property>> GetByOwnerIdAsync(string ownerId);
         Task<IEnumerable<Property>> GetByStatusAsync(
-    ListingStatus status);
+            ListingStatus status);
         Task AddAsync(Property property);
 
         void Update(Property property);
@@ -21,5 +20,13 @@ namespace DhakaRent.Facade.Interfaces
         void Delete(Property property);
 
         Task SaveChangesAsync();
+
+        Task<IEnumerable<Property>> SearchApprovedPropertiesAsync(
+            string? area,
+            PropertyType? propertyType,
+            decimal? minRent,
+            decimal? maxRent,
+            int? bedrooms);
+
     }
 }
