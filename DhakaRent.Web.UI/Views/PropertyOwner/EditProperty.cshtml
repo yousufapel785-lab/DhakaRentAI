@@ -1,0 +1,207 @@
+﻿@model DhakaRent.Web.UI.ViewModels.PropertyEditViewModel
+
+@using DhakaRent.Entities.Enums
+
+@{
+    ViewData["Title"] = "Edit Property";
+}
+
+<div class="container py-4">
+
+    <h2 class="mb-3">Edit Property</h2>
+
+    <p class="text-muted">
+        Update your property information.
+        Changes will require admin review.
+    </p>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+
+            <form asp-controller="PropertyOwner"
+                  asp-action="EditProperty"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input asp-for="Id" type="hidden" />
+
+                <div asp-validation-summary="All"
+                     class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+
+                    <!-- Property Title -->
+                    <div class="col-md-12">
+                        <label asp-for="Title"
+                               class="form-label"></label>
+
+                        <input asp-for="Title"
+                               class="form-control" />
+
+                        <span asp-validation-for="Title"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Property Type -->
+                    <div class="col-md-6">
+                        <label asp-for="PropertyType"
+                               class="form-label"></label>
+
+                        <select asp-for="PropertyType"
+                                asp-items="Html.GetEnumSelectList<PropertyType>()"
+                                class="form-select">
+                        </select>
+
+                        <span asp-validation-for="PropertyType"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Area -->
+                    <div class="col-md-6">
+                        <label asp-for="Area"
+                               class="form-label"></label>
+
+                        <input asp-for="Area"
+                               class="form-control" />
+
+                        <span asp-validation-for="Area"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="col-md-12">
+                        <label asp-for="Address"
+                               class="form-label"></label>
+
+                        <input asp-for="Address"
+                               class="form-control" />
+
+                        <span asp-validation-for="Address"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Size -->
+                    <div class="col-md-6">
+                        <label asp-for="SizeInSqFt"
+                               class="form-label">
+                            Size (Square Feet)
+                        </label>
+
+                        <input asp-for="SizeInSqFt"
+                               type="number"
+                               step="0.01"
+                               class="form-control" />
+
+                        <span asp-validation-for="SizeInSqFt"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Monthly Rent -->
+                    <div class="col-md-6">
+                        <label asp-for="MonthlyRent"
+                               class="form-label">
+                            Monthly Rent (BDT)
+                        </label>
+
+                        <input asp-for="MonthlyRent"
+                               type="number"
+                               step="0.01"
+                               class="form-control" />
+
+                        <span asp-validation-for="MonthlyRent"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Bedrooms -->
+                    <div class="col-md-6">
+                        <label asp-for="Bedrooms"
+                               class="form-label"></label>
+
+                        <input asp-for="Bedrooms"
+                               type="number"
+                               class="form-control" />
+
+                        <span asp-validation-for="Bedrooms"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Bathrooms -->
+                    <div class="col-md-6">
+                        <label asp-for="Bathrooms"
+                               class="form-label"></label>
+
+                        <input asp-for="Bathrooms"
+                               type="number"
+                               class="form-control" />
+
+                        <span asp-validation-for="Bathrooms"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Available From -->
+                    <div class="col-md-6">
+                        <label asp-for="AvailableFrom"
+                               class="form-label"></label>
+
+                        <input asp-for="AvailableFrom"
+                               type="date"
+                               class="form-control" />
+
+                        <span asp-validation-for="AvailableFrom"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Furnished -->
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check">
+                            <input asp-for="IsFurnished"
+                                   class="form-check-input" />
+
+                            <label asp-for="IsFurnished"
+                                   class="form-check-label">
+                                Furnished Property
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-md-12">
+                        <label asp-for="Description"
+                               class="form-label"></label>
+
+                        <textarea asp-for="Description"
+                                  rows="5"
+                                  class="form-control"></textarea>
+
+                        <span asp-validation-for="Description"
+                              class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Save Changes
+                    </button>
+
+                    <a asp-controller="PropertyOwner"
+                       asp-action="Dashboard"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

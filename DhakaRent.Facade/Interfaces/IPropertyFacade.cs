@@ -32,5 +32,12 @@ namespace DhakaRent.Facade.Interfaces
             decimal? maxRent,
             int? bedrooms);
 
+
+        Task<bool> UpdateOwnerPropertyAsync(
+            int propertyId,
+            string ownerId,
+            Property updatedData);
+
+
     }
 }

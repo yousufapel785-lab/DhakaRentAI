@@ -85,6 +85,7 @@
                                 <th>Monthly Rent</th>
                                 <th>Status</th>
                                 <th>Submitted Date</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
 
@@ -122,8 +123,32 @@
                                             </span>
                                         }
                                     </td>
+
                                     <td>@property.CreatedAt.ToString("dd MMM yyyy")</td>
+
+                                    <!-- Actions Column -->
+                                    <td>
+                                        @if (property.ListingStatus == "Pending" ||
+                                             property.ListingStatus == "Approved" ||
+                                             property.ListingStatus == "Rejected")
+                                        {
+                                            <a asp-controller="PropertyOwner"
+                                               asp-action="EditProperty"
+                                               asp-route-id="@property.Id"
+                                               class="btn btn-sm btn-outline-primary">
+                                                Edit
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Not editable
+                                            </span>
+                                        }
+                                    </td>
+
                                 </tr>
+
                             }
                         </tbody>
 

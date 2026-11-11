@@ -119,5 +119,123 @@ namespace DhakaRent.Web.UI.Controllers
 
             return RedirectToAction(nameof(Dashboard));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EditProperty(int id)
+        {
+            // Step 1: Validate Property ID
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
+            // Step 2: Get current logged-in Owner ID
+            var ownerId = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(ownerId))
+            {
+                return Challenge();
+            }
+
+            // Step 3: Get existing property from database
+            var property = await _propertyFacade
+                .GetPropertyByIdAsync(id);
+
+            // Step 4: Check property ownership
+            if (property == null || property.OwnerId != ownerId)
+            {
+                return NotFound();
+            }
+
+            // Step 5: Check whether editing is allowed
+            if (property.ListingStatus != ListingStatus.Pending &&
+                property.ListingStatus != ListingStatus.Approved &&
+                property.ListingStatus != ListingStatus.Rejected)
+            {
+                return BadRequest(
+                    "This property cannot be edited in its current status.");
+            }
+
+            // Step 6: Convert Entity to Edit ViewModel
+            var model = new PropertyEditViewModel
+            {
+                Id = property.Id,
+                Title = property.Title,
+                PropertyType = property.PropertyType,
+                Description = property.Description,
+                Area = property.Area,
+                Address = property.Address,
+                SizeInSqFt = property.SizeInSqFt,
+                Bedrooms = property.Bedrooms,
+                Bathrooms = property.Bathrooms,
+                IsFurnished = property.IsFurnished,
+                MonthlyRent = property.MonthlyRent,
+                AvailableFrom = property.AvailableFrom
+            };
+
+            // Step 7: Send existing data to Edit View
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProperty(
+            PropertyEditViewModel model)
+        {
+            // Step 1: Validate submitted form
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Step 2: Get logged-in Owner ID
+            var ownerId = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrWhiteSpace(ownerId))
+            {
+                return Challenge();
+            }
+
+            // Step 3: Map allowed form fields to Property
+            var updatedData = new Property
+            {
+                Title = model.Title,
+                PropertyType = model.PropertyType,
+                Description = model.Description,
+                Area = model.Area,
+                Address = model.Address,
+                SizeInSqFt = model.SizeInSqFt,
+                Bedrooms = model.Bedrooms,
+                Bathrooms = model.Bathrooms,
+                IsFurnished = model.IsFurnished,
+                MonthlyRent = model.MonthlyRent,
+                AvailableFrom = model.AvailableFrom
+            };
+
+            // Step 4: Call secure Facade method
+            var result = await _propertyFacade
+                .UpdateOwnerPropertyAsync(
+                    model.Id,
+                    ownerId,
+                    updatedData);
+
+            // Step 5: Handle unsuccessful update
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            // Step 6: Show success message
+            TempData["SuccessMessage"] =
+                "Property updated successfully. " +
+                "It is now pending admin approval.";
+
+            // Step 7: Redirect to Owner Dashboard
+            return RedirectToAction(nameof(Dashboard));
+        }
+
+
     }
 }

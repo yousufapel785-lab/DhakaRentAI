@@ -142,5 +142,82 @@ namespace DhakaRent.Facade.Services
                 bedrooms);
         }
 
+        public async Task<bool> UpdateOwnerPropertyAsync(
+            int propertyId,
+            string ownerId,
+            Property updatedData)
+        {
+            // Step 1: Validate basic parameters
+            if (propertyId <= 0 ||
+                string.IsNullOrWhiteSpace(ownerId) ||
+                updatedData == null)
+            {
+                return false;
+            }
+
+            // Step 2: Load existing property
+            var existingProperty = await _propertyRepository
+                .GetByIdAsync(propertyId);
+
+            if (existingProperty == null)
+            {
+                return false;
+            }
+
+            // Step 3: Verify ownership
+            if (existingProperty.OwnerId != ownerId)
+            {
+                return false;
+            }
+
+            // Step 4: Check allowed listing statuses
+            if (existingProperty.ListingStatus != ListingStatus.Pending &&
+                existingProperty.ListingStatus != ListingStatus.Approved &&
+                existingProperty.ListingStatus != ListingStatus.Rejected)
+            {
+                return false;
+            }
+
+            // Step 5: Validate important business fields
+            if (string.IsNullOrWhiteSpace(updatedData.Title) ||
+                string.IsNullOrWhiteSpace(updatedData.Area) ||
+                string.IsNullOrWhiteSpace(updatedData.Address) ||
+                !Enum.IsDefined(updatedData.PropertyType) ||
+                updatedData.SizeInSqFt <= 0 ||
+                updatedData.MonthlyRent <= 0 ||
+                updatedData.Bedrooms < 0 ||
+                updatedData.Bathrooms < 0)
+            {
+                return false;
+            }
+
+            // Step 6: Update allowed property fields only
+            existingProperty.Title = updatedData.Title.Trim();
+            existingProperty.PropertyType = updatedData.PropertyType;
+            existingProperty.Description =
+                updatedData.Description?.Trim() ?? string.Empty;
+
+            existingProperty.Area = updatedData.Area.Trim();
+            existingProperty.Address = updatedData.Address.Trim();
+            existingProperty.SizeInSqFt = updatedData.SizeInSqFt;
+            existingProperty.Bedrooms = updatedData.Bedrooms;
+            existingProperty.Bathrooms = updatedData.Bathrooms;
+            existingProperty.IsFurnished = updatedData.IsFurnished;
+            existingProperty.MonthlyRent = updatedData.MonthlyRent;
+            existingProperty.AvailableFrom = updatedData.AvailableFrom;
+
+            // Step 7: Require admin approval again
+            existingProperty.ListingStatus = ListingStatus.Pending;
+            existingProperty.RejectionReason = null;
+            existingProperty.UpdatedAt = DateTime.UtcNow;
+
+            // Step 8: Save changes
+            _propertyRepository.Update(existingProperty);
+            await _propertyRepository.SaveChangesAsync();
+
+            return true;
+        }
+
+
     }
 }
