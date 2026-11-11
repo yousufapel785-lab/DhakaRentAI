@@ -10,6 +10,7 @@ namespace DhakaRent.Entities.Enums
         House = 2,
         Studio = 3,
         Duplex = 4,
-        Room = 5
+        Room = 5,
+        Shop = 6
     }
 }

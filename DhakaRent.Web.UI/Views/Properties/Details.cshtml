@@ -1,0 +1,88 @@
+﻿@model DhakaRent.Web.UI.ViewModels.PublicPropertyDetailsViewModel
+
+@{
+    ViewData["Title"] = "Property Details";
+}
+
+<div class="container py-4">
+
+    <div class="mb-3">
+        <a asp-controller="Properties"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            &larr; Back to Properties
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body p-4">
+
+            <h2 class="mb-2">@Model.Title</h2>
+
+            <p class="text-muted mb-3">
+                @Model.Area, Dhaka
+            </p>
+
+            <h3 class="text-success mb-4">
+                ৳@Model.MonthlyRent.ToString("N0")
+                <small class="text-muted fs-6">/ month</small>
+            </h3>
+
+            <hr />
+
+            <h5>Property Information</h5>
+
+            <div class="row mt-3">
+
+                <div class="col-md-6 mb-3">
+                    <strong>Property Type:</strong>
+                    @Model.PropertyType
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Size:</strong>
+                    @Model.SizeInSqFt.ToString("N0") sqft
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Bedrooms:</strong>
+                    @Model.Bedrooms
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Bathrooms:</strong>
+                    @Model.Bathrooms
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Furnishing:</strong>
+                    @(Model.IsFurnished ? "Furnished" : "Unfurnished")
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Available From:</strong>
+                    @(Model.AvailableFrom?.ToString("dd MMM yyyy") ?? "Not specified")
+                </div>
+
+            </div>
+
+            <hr />
+
+            <h5>Address</h5>
+            <p>@Model.Address</p>
+
+            <hr />
+
+            <h5>Description</h5>
+            <p class="text-break">
+                @(string.IsNullOrWhiteSpace(Model.Description)
+                    ? "No description provided."
+                    : Model.Description)
+            </p>
+
+        </div>
+
+    </div>
+
+</div>

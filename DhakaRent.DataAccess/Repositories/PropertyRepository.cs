@@ -41,7 +41,7 @@ namespace DhakaRent.DataAccess.Repositories
                 .ToListAsync();
         }
         public async Task<IEnumerable<Property>> GetByStatusAsync(
-    ListingStatus status)
+            ListingStatus status)
         {
             return await _context.Properties
                 .AsNoTracking()
@@ -72,5 +72,61 @@ namespace DhakaRent.DataAccess.Repositories
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Property>> SearchApprovedPropertiesAsync(
+            string? area,
+            PropertyType? propertyType,
+            decimal? minRent,
+            decimal? maxRent,
+            int? bedrooms)
+        {
+            // Start with approved properties only
+            var query = _context.Properties
+                .AsNoTracking()
+                .Where(p => p.ListingStatus == ListingStatus.Approved);
+
+            // Filter by area
+            if (!string.IsNullOrWhiteSpace(area))
+            {
+                var searchArea = area.Trim();
+
+                query = query.Where(p =>
+                    p.Area.Contains(searchArea));
+            }
+
+            // Filter by property type
+            if (propertyType.HasValue)
+            {
+                query = query.Where(p =>
+                    p.PropertyType == propertyType.Value);
+            }
+
+            // Filter by minimum rent
+            if (minRent.HasValue)
+            {
+                query = query.Where(p =>
+                    p.MonthlyRent >= minRent.Value);
+            }
+
+            // Filter by maximum rent
+            if (maxRent.HasValue)
+            {
+                query = query.Where(p =>
+                    p.MonthlyRent <= maxRent.Value);
+            }
+
+            // Filter by bedrooms
+            if (bedrooms.HasValue)
+            {
+                query = query.Where(p =>
+                    p.Bedrooms == bedrooms.Value);
+            }
+
+            // Execute query in SQL Server
+            return await query
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+        }
+
     }
 }

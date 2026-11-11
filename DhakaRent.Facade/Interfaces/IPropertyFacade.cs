@@ -23,5 +23,14 @@ namespace DhakaRent.Facade.Interfaces
         Task<bool> ApprovePropertyAsync(int id);
 
         Task<bool> RejectPropertyAsync(int id, string reason);
+
+
+        Task<IEnumerable<Property>> SearchApprovedPropertiesAsync(
+            string? area,
+            PropertyType? propertyType,
+            decimal? minRent,
+            decimal? maxRent,
+            int? bedrooms);
+
     }
 }
