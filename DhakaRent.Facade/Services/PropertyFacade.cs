@@ -218,6 +218,50 @@ namespace DhakaRent.Facade.Services
             return true;
         }
 
+        public async Task<bool> DeactivateOwnerPropertyAsync(
+            int propertyId,
+            string ownerId)
+        {
+            // Step 1: Validate input
+            if (propertyId <= 0 || string.IsNullOrWhiteSpace(ownerId))
+            {
+                return false;
+            }
+
+            // Step 2: Get existing property from database
+            var property = await _propertyRepository.GetByIdAsync(propertyId);
+
+            if (property == null)
+            {
+                return false;
+            }
+
+            // Step 3: Verify property ownership
+            if (property.OwnerId != ownerId)
+            {
+                return false;
+            }
+
+            // Step 4: Check allowed statuses
+            if (property.ListingStatus != ListingStatus.Pending &&
+                property.ListingStatus != ListingStatus.Approved &&
+                property.ListingStatus != ListingStatus.Rejected)
+            {
+                return false;
+            }
+
+            // Step 5: Deactivate property
+            property.ListingStatus = ListingStatus.Inactive;
+            property.UpdatedAt = DateTime.UtcNow;
+
+            // Step 6: Save changes
+            _propertyRepository.Update(property);
+            await _propertyRepository.SaveChangesAsync();
+
+            return true;
+        }
+
+
 
     }
 }
