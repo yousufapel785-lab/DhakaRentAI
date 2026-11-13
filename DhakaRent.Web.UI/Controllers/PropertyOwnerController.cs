@@ -237,5 +237,44 @@ namespace DhakaRent.Web.UI.Controllers
         }
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeactivateProperty(int id)
+        {
+            // Step 1: Validate Property ID
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
+            // Step 2: Get logged-in Owner ID
+            var ownerId = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrWhiteSpace(ownerId))
+            {
+                return Challenge();
+            }
+
+            // Step 3: Call secure Facade method
+            var result = await _propertyFacade
+                .DeactivateOwnerPropertyAsync(id, ownerId);
+
+            // Step 4: Handle unsuccessful deactivation
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            // Step 5: Show success message
+            TempData["SuccessMessage"] =
+                "Property deactivated successfully.";
+
+            // Step 6: Redirect to Owner Dashboard
+            return RedirectToAction(nameof(Dashboard));
+        }
+
+
+
     }
 }

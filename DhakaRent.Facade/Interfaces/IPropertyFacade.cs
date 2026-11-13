@@ -39,5 +39,9 @@ namespace DhakaRent.Facade.Interfaces
             Property updatedData);
 
 
+        Task<bool> DeactivateOwnerPropertyAsync(
+            int propertyId,
+            string ownerId);
+
     }
 }
