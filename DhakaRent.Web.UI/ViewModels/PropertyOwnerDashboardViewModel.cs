@@ -27,5 +27,8 @@
         public string ListingStatus { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; }
+
+        public DateTime? AvailableFrom { get; set; }
+
     }
 }

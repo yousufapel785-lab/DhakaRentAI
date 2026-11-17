@@ -1,8 +1,243 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Find Your Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- DhakaRent AI - Homepage Hero Section -->
+<section class="dr-hero">
+
+    <div class="row align-items-center">
+
+        <!-- Hero Content -->
+        <div class="col-lg-8">
+
+            <span class="dr-hero-label">
+                SMART RENTAL PLATFORM · DHAKA
+            </span>
+
+            <h1 class="dr-hero-title">
+                Find Your Perfect Home in
+                <span>Dhaka.</span>
+            </h1>
+
+            <p class="dr-hero-description">
+                Discover rental properties across Dhaka,
+                explore your options, and take the next
+                step toward a place you can call home.
+            </p>
+
+            <!-- Hero Buttons -->
+            <div class="d-flex flex-wrap gap-3 mt-4">
+
+                <a asp-controller="Properties"
+                   asp-action="Index"
+                   class="btn dr-hero-primary">
+                    Explore Properties
+                </a>
+
+                <a asp-controller="Account"
+                   asp-action="Register"
+                   class="btn dr-hero-secondary">
+                    Get Started
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Hero Benefits -->
+    <div class="dr-hero-features">
+
+        <span>✓ Admin-reviewed listings</span>
+
+        <span>✓ Dhaka-focused property search</span>
+
+        <span>✓ Easy rental exploration</span>
+
+    </div>
+
+</section>
+
+<!-- Homepage Property Search Section -->
+<section class="dr-home-search">
+
+    <div class="dr-home-search-header">
+        <span class="dr-section-label">
+            FIND YOUR NEXT HOME
+        </span>
+
+        <h2>Search Rental Properties</h2>
+
+        <p>
+            Choose your preferred area and monthly
+            rental budget to find a suitable home.
+        </p>
+    </div>
+
+    <div class="dr-search-card">
+
+        <form asp-controller="Properties"
+              asp-action="Index"
+              method="get">
+
+            <div class="row g-3 align-items-end">
+
+                <!-- Search by Area -->
+                <div class="col-lg-4">
+
+                    <label for="homeArea"
+                           class="form-label">
+                        Location / Area
+                    </label>
+
+                    <input type="text"
+                           id="homeArea"
+                           name="Area"
+                           class="form-control"
+                           placeholder="e.g. Mirpur, Uttara" />
+
+                </div>
+
+                <!-- Minimum Monthly Rent -->
+                <div class="col-lg-3">
+
+                    <label for="homeMinRent"
+                           class="form-label">
+                        Minimum Rent (BDT)
+                    </label>
+
+                    <input type="number"
+                           id="homeMinRent"
+                           name="MinRent"
+                           min="0"
+                           step="0.01"
+                           class="form-control"
+                           placeholder="e.g. 10000" />
+
+                </div>
+
+                <!-- Maximum Monthly Rent -->
+                <div class="col-lg-3">
+
+                    <label for="homeMaxRent"
+                           class="form-label">
+                        Maximum Rent (BDT)
+                    </label>
+
+                    <input type="number"
+                           id="homeMaxRent"
+                           name="MaxRent"
+                           min="0"
+                           step="0.01"
+                           class="form-control"
+                           placeholder="e.g. 25000" />
+
+                </div>
+
+                <!-- Submit Search -->
+                <div class="col-lg-2">
+
+                    <button type="submit"
+                            class="btn dr-home-search-btn w-100">
+                        Search
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+<!-- How DhakaRent AI Works -->
+<section class="dr-how-it-works">
+
+    <!-- Section Heading -->
+    <div class="dr-how-header">
+
+        <span class="dr-section-label">
+            SIMPLE & SMART RENTING
+        </span>
+
+        <h2>How DhakaRent AI Works</h2>
+
+        <p>
+            Explore properties, publish rental listings,
+            and benefit from an admin-reviewed listing process.
+        </p>
+
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="row g-4">
+
+        <!-- Card 1: Find a Home -->
+        <div class="col-md-4">
+
+            <div class="dr-feature-card">
+
+                <div class="dr-feature-icon">
+                    01
+                </div>
+
+                <h4>Find a Home</h4>
+
+                <p>
+                    Search approved rental properties
+                    by location, property type,
+                    budget and bedrooms.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Card 2: List a Property -->
+        <div class="col-md-4">
+
+            <div class="dr-feature-card">
+
+                <div class="dr-feature-icon">
+                    02
+                </div>
+
+                <h4>List a Property</h4>
+
+                <p>
+                    Property owners can create and
+                    manage rental listings from
+                    their own dashboard.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Card 3: Admin Review -->
+        <div class="col-md-4">
+
+            <div class="dr-feature-card">
+
+                <div class="dr-feature-icon">
+                    03
+                </div>
+
+                <h4>Admin Review</h4>
+
+                <p>
+                    Submitted properties go through
+                    admin review before appearing
+                    in public search results.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

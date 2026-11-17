@@ -4,6 +4,11 @@
 
 @{
     ViewData["Title"] = "Edit Property";
+
+    // Today's date in Bangladesh (UTC+6)
+    var minAvailableDate = DateTime.UtcNow
+        .AddHours(6)
+        .ToString("yyyy-MM-dd");
 }
 
 <div class="container py-4">
@@ -144,12 +149,17 @@
                         <label asp-for="AvailableFrom"
                                class="form-label"></label>
 
+                        
+                        
                         <input asp-for="AvailableFrom"
                                type="date"
+                               asp-format="{0:yyyy-MM-dd}"
+                               min="@minAvailableDate"
                                class="form-control" />
 
                         <span asp-validation-for="AvailableFrom"
                               class="text-danger"></span>
+
                     </div>
 
                     <!-- Furnished -->
