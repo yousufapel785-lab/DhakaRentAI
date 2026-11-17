@@ -22,5 +22,7 @@ namespace DhakaRent.Web.UI.ViewModels
         public int Bathrooms { get; set; }
 
         public bool IsFurnished { get; set; }
+
+
     }
 }

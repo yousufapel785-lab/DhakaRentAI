@@ -51,18 +51,21 @@ namespace DhakaRent.Web.UI.Controllers
                 RejectedProperties = properties.Count(
                     p => p.ListingStatus == ListingStatus.Rejected),
 
+
                 Properties = properties
-                    .OrderByDescending(p => p.CreatedAt)
-                    .Select(p => new PropertyListItemViewModel
-                    {
-                        Id = p.Id,
-                        Title = p.Title,
-                        Area = p.Area,
-                        MonthlyRent = p.MonthlyRent,
-                        ListingStatus = p.ListingStatus.ToString(),
-                        CreatedAt = p.CreatedAt
-                    })
-                    .ToList()
+    .OrderByDescending(p => p.CreatedAt)
+    .Select(p => new PropertyListItemViewModel
+    {
+        Id = p.Id,
+        Title = p.Title,
+        Area = p.Area,
+        MonthlyRent = p.MonthlyRent,
+        ListingStatus = p.ListingStatus.ToString(),
+        CreatedAt = p.CreatedAt,
+        AvailableFrom = p.AvailableFrom
+    })
+    .ToList()
+
             };
 
             return View(model);

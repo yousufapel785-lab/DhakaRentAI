@@ -46,7 +46,9 @@ namespace DhakaRent.DataAccess.Repositories
             return await _context.Properties
                 .AsNoTracking()
                 .Where(p => p.ListingStatus == status)
-                .OrderBy(p => p.CreatedAt)
+                .OrderByDescending(p => p.CreatedAt)
+                .ThenByDescending(p => p.Id)
+    
                 .ToListAsync();
         }
         // Add a new property

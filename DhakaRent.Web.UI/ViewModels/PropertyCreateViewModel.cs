@@ -4,7 +4,7 @@ using DhakaRent.Entities.Enums;
 
 namespace DhakaRent.Web.UI.ViewModels
 {
-    public class PropertyCreateViewModel
+    public class PropertyCreateViewModel : IValidatableObject
     {
         [Required]
         [StringLength(150)]
@@ -47,5 +47,25 @@ namespace DhakaRent.Web.UI.ViewModels
 
         [Display(Name = "Available From")]
         public DateTime? AvailableFrom { get; set; }
+
+
+        public IEnumerable<ValidationResult> Validate(
+            ValidationContext validationContext)
+        {
+            // Current date in Bangladesh (UTC+6)
+            DateTime todayInBangladesh =
+                DateTime.UtcNow.AddHours(6).Date;
+
+            // Check if selected date is in the past
+            if (AvailableFrom.HasValue &&
+                AvailableFrom.Value.Date < todayInBangladesh)
+            {
+                yield return new ValidationResult(
+                    "Available From cannot be a past date.",
+                    new[] { nameof(AvailableFrom) }
+                );
+            }
+        }
+
     }
 }

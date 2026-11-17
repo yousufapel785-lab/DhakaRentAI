@@ -31,14 +31,37 @@ namespace DhakaRent.Facade.Services
             return await _propertyRepository.GetByOwnerIdAsync(ownerId);
         }
 
+
         public async Task CreatePropertyAsync(Property property)
         {
-            property.CreatedAt = DateTime.UtcNow;
-            property.ListingStatus = DhakaRent.Entities.Enums.ListingStatus.Pending;
+            // Step 1: Check property object
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
 
+            // Step 2: Get today's date in Bangladesh
+            DateTime todayInBangladesh =
+                DateTime.UtcNow.AddHours(6).Date;
+
+            // Step 3: Prevent past dates
+            if (property.AvailableFrom.HasValue &&
+                property.AvailableFrom.Value.Date < todayInBangladesh)
+            {
+                throw new ArgumentException(
+                    "Available From cannot be a past date.");
+            }
+
+            // Step 4: Existing business logic
+            property.CreatedAt = DateTime.UtcNow;
+
+            property.ListingStatus = ListingStatus.Pending;
+
+            // Step 5: Save to database
             await _propertyRepository.AddAsync(property);
             await _propertyRepository.SaveChangesAsync();
         }
+
 
         public async Task UpdatePropertyAsync(Property property)
         {
@@ -190,6 +213,18 @@ namespace DhakaRent.Facade.Services
             {
                 return false;
             }
+
+            // Step 5.1: Validate Available From date
+            DateTime todayInBangladesh =
+                DateTime.UtcNow.AddHours(6).Date;
+
+            if (updatedData.AvailableFrom.HasValue &&
+                updatedData.AvailableFrom.Value.Date < todayInBangladesh)
+            {
+                throw new ArgumentException(
+                    "Available From cannot be a past date.");
+            }
+
 
             // Step 6: Update allowed property fields only
             existingProperty.Title = updatedData.Title.Trim();

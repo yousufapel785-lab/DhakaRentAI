@@ -6,15 +6,56 @@ using DhakaRent.DataAccess.Identity;
 using DhakaRent.Facade.Interfaces;
 using DhakaRent.Web.UI.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using System.Linq;
 namespace DhakaRent.Web.UI.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        public IActionResult Dashboard()
+
+        [HttpGet]
+        public async Task<IActionResult> Dashboard()
         {
-            return View();
+            // Step 1: Get all properties from database
+            var properties = (await _propertyFacade
+                .GetAllPropertiesAsync())
+                .ToList();
+
+            // Step 2: Prepare dynamic dashboard data
+            var model = new AdminDashboardViewModel
+            {
+                TotalProperties = properties.Count,
+
+                PendingProperties = properties.Count(
+                    p => p.ListingStatus == ListingStatus.Pending),
+
+                ApprovedProperties = properties.Count(
+                    p => p.ListingStatus == ListingStatus.Approved),
+
+                RejectedProperties = properties.Count(
+                    p => p.ListingStatus == ListingStatus.Rejected),
+
+                // Step 3: Get latest 5 pending properties
+                RecentPendingProperties = properties
+                    .Where(p => p.ListingStatus == ListingStatus.Pending)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .ThenByDescending(p => p.Id)
+                    .Take(5)
+                    .Select(p => new AdminRecentPendingPropertyViewModel
+                    {
+                        Id = p.Id,
+                        Title = p.Title,
+                        Area = p.Area,
+                        MonthlyRent = p.MonthlyRent,
+                        CreatedAt = p.CreatedAt
+                    })
+                    .ToList()
+            };
+
+            // Step 4: Send data to Dashboard View
+            return View(model);
         }
+
         private readonly IPropertyFacade _propertyFacade;
         private readonly UserManager<ApplicationUser> _userManager;
 
