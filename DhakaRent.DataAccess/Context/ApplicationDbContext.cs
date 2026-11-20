@@ -37,6 +37,14 @@ namespace DhakaRent.DataAccess.Context
             RentPredictionHistories
         { get; set; }
 
+        // Property Management SaaS Entities
+
+        public DbSet<Building> Buildings { get; set; }
+
+        public DbSet<Floor> Floors { get; set; }
+
+        public DbSet<RentalUnit> RentalUnits { get; set; }
+
 
         protected override void OnModelCreating(
             ModelBuilder builder)
@@ -191,6 +199,68 @@ namespace DhakaRent.DataAccess.Context
 
             builder.Entity<RentPredictionHistory>()
                 .Property(rp => rp.PredictedRent)
+                .HasPrecision(18, 2);
+
+
+            // 10. Building Configuration
+
+            builder.Entity<Building>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(b => b.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Building>()
+                .HasIndex(b => b.OwnerId);
+
+            builder.Entity<Building>()
+                .Property(b => b.Latitude)
+                .HasPrecision(9, 6);
+
+            builder.Entity<Building>()
+                .Property(b => b.Longitude)
+                .HasPrecision(9, 6);
+
+
+            // 11. Floor Configuration
+
+            builder.Entity<Floor>()
+                .HasOne(f => f.Building)
+                .WithMany(b => b.Floors)
+                .HasForeignKey(f => f.BuildingId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Floor>()
+                .HasIndex(f => new
+                {
+                    f.BuildingId,
+                    f.FloorNumber
+                })
+                .IsUnique();
+
+
+            // 12. RentalUnit Configuration
+
+            builder.Entity<RentalUnit>()
+                .HasOne(u => u.Floor)
+                .WithMany(f => f.Units)
+                .HasForeignKey(u => u.FloorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<RentalUnit>()
+                .HasIndex(u => new
+                {
+                    u.FloorId,
+                    u.UnitNumber
+                })
+                .IsUnique();
+
+            builder.Entity<RentalUnit>()
+                .Property(u => u.SizeInSqFt)
+                .HasPrecision(10, 2);
+
+            builder.Entity<RentalUnit>()
+                .Property(u => u.StandardMonthlyRent)
                 .HasPrecision(18, 2);
 
 

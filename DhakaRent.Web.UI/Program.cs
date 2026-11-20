@@ -13,6 +13,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
 builder.Services.AddScoped<IPropertyFacade, PropertyFacade>();
 
+// New Building Management SaaS DI
+builder.Services.AddScoped<IBuildingRepository, BuildingRepository>();
+
+builder.Services.AddScoped<IBuildingFacade, BuildingFacade>();
+
+// Floor Management DI
+builder.Services.AddScoped<IFloorRepository, FloorRepository>();
+builder.Services.AddScoped<IFloorFacade, FloorFacade>();
+
+// Rental Unit Management DI
+builder.Services.AddScoped<IRentalUnitRepository, RentalUnitRepository>();
+builder.Services.AddScoped<IRentalUnitFacade, RentalUnitFacade>();
+
 // 1. Database Connection
 var connectionString = builder.Configuration
     .GetConnectionString("DefaultConnection");
