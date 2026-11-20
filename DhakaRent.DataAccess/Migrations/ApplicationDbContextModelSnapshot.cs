@@ -92,6 +92,54 @@ namespace DhakaRent.DataAccess.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("DhakaRent.Entities.Models.Building", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("Area")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("Latitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<decimal?>("Longitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Buildings");
+                });
+
             modelBuilder.Entity("DhakaRent.Entities.Models.Conversation", b =>
                 {
                     b.Property<int>("Id")
@@ -130,6 +178,33 @@ namespace DhakaRent.DataAccess.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("DhakaRent.Entities.Models.Floor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BuildingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FloorNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuildingId", "FloorNumber")
+                        .IsUnique();
+
+                    b.ToTable("Floors");
                 });
 
             modelBuilder.Entity("DhakaRent.Entities.Models.Message", b =>
@@ -402,6 +477,47 @@ namespace DhakaRent.DataAccess.Migrations
                     b.ToTable("RentPredictionHistories");
                 });
 
+            modelBuilder.Entity("DhakaRent.Entities.Models.RentalUnit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Bathrooms")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Bedrooms")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FloorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OccupancyStatus")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("SizeInSqFt")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("StandardMonthlyRent")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UnitNumber")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FloorId", "UnitNumber")
+                        .IsUnique();
+
+                    b.ToTable("RentalUnits");
+                });
+
             modelBuilder.Entity("DhakaRent.Entities.Models.SavedProperty", b =>
                 {
                     b.Property<int>("Id")
@@ -610,6 +726,15 @@ namespace DhakaRent.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("DhakaRent.Entities.Models.Building", b =>
+                {
+                    b.HasOne("DhakaRent.DataAccess.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("DhakaRent.Entities.Models.Conversation", b =>
                 {
                     b.HasOne("DhakaRent.DataAccess.Identity.ApplicationUser", null)
@@ -629,6 +754,17 @@ namespace DhakaRent.DataAccess.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DhakaRent.Entities.Models.Floor", b =>
+                {
+                    b.HasOne("DhakaRent.Entities.Models.Building", "Building")
+                        .WithMany("Floors")
+                        .HasForeignKey("BuildingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Building");
                 });
 
             modelBuilder.Entity("DhakaRent.Entities.Models.Message", b =>
@@ -706,6 +842,17 @@ namespace DhakaRent.DataAccess.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DhakaRent.Entities.Models.RentalUnit", b =>
+                {
+                    b.HasOne("DhakaRent.Entities.Models.Floor", "Floor")
+                        .WithMany("Units")
+                        .HasForeignKey("FloorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Floor");
                 });
 
             modelBuilder.Entity("DhakaRent.Entities.Models.SavedProperty", b =>
@@ -787,6 +934,16 @@ namespace DhakaRent.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DhakaRent.Entities.Models.Building", b =>
+                {
+                    b.Navigation("Floors");
+                });
+
+            modelBuilder.Entity("DhakaRent.Entities.Models.Floor", b =>
+                {
+                    b.Navigation("Units");
                 });
 #pragma warning restore 612, 618
         }
