@@ -1,0 +1,254 @@
+﻿@model IReadOnlyList<DhakaRent.Entities.Models.PropertyInquiry>
+
+@using DhakaRent.Entities.Enums
+
+@{
+    ViewData["Title"] = "Received Inquiries";
+
+    // Inquiry ID -> Conversation ID mapping
+    // Provided by OwnerInquiryController.Index()
+    var conversationIdsByInquiryId =
+        ViewData["ConversationIdsByInquiryId"]
+            as Dictionary<int, int>
+        ?? new Dictionary<int, int>();
+}
+
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between
+        align-items-center flex-wrap gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Received Inquiries
+            </h2>
+
+            <p class="text-muted mb-0">
+                View and respond to inquiries
+                about your rental properties.
+            </p>
+        </div>
+
+        <a asp-controller="PropertyOwner"
+           asp-action="Dashboard"
+           class="btn btn-outline-secondary">
+            Back to Owner Dashboard
+        </a>
+
+    </div>
+
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- Error Message -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Received Inquiries -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0">
+                Received Inquiries (@Model.Count)
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.Count == 0)
+            {
+                <!-- Empty State -->
+                <div class="text-center py-5">
+
+                    <h5 class="fw-bold">
+                        No Inquiries Received Yet
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        When tenants contact you about
+                        your properties, their inquiries
+                        will appear here.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Inquiry ID</th>
+                                <th>Property</th>
+                                <th>Tenant Message</th>
+                                <th>Received Date</th>
+                                <th>Status</th>
+                                <th>Reply</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var inquiry in Model)
+                            {
+                                <tr>
+
+                                    <!-- Inquiry ID -->
+                                    <td class="fw-semibold">
+                                        #@inquiry.Id
+                                    </td>
+
+                                    <!-- Property -->
+                                    <td>
+                                        Property #@inquiry.PropertyId
+                                    </td>
+
+                                    <!-- Tenant Message -->
+                                    <td style="min-width: 220px;
+                                        max-width: 350px;">
+
+                                        <div class="text-break"
+                                             style="white-space: pre-wrap;">
+                                            @inquiry.InitialMessage
+                                        </div>
+
+                                    </td>
+
+                                    <!-- Received Date -->
+                                    <td>
+                                        @inquiry.CreatedAt.ToString(
+                                            "dd MMM yyyy, hh:mm tt")
+
+                                        <small class="text-muted d-block">
+                                            UTC
+                                        </small>
+                                    </td>
+
+                                    <!-- Inquiry Status -->
+                                    <td>
+
+                                        @if (inquiry.Status ==
+                                             InquiryStatus.Pending)
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                Pending
+                                            </span>
+                                        }
+                                        else if (inquiry.Status ==
+                                                 InquiryStatus.Responded)
+                                        {
+                                            <span class="badge bg-success">
+                                                Responded
+                                            </span>
+                                        }
+                                        else if (inquiry.Status ==
+                                                 InquiryStatus.Closed)
+                                        {
+                                            <span class="badge bg-secondary">
+                                                Closed
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    
+                                    <!-- Reply and Conversation Actions -->
+                                    <td style="min-width: 280px;">
+
+                                        <div class="d-flex flex-column gap-3">
+
+                                            <!-- Open Existing Conversation -->
+                                            @if (conversationIdsByInquiryId.TryGetValue(
+                                                inquiry.Id, out int conversationId))
+                                            {
+                                                <div>
+                                                    <a asp-controller="Messaging"
+                                                       asp-action="Details"
+                                                       asp-route-id="@conversationId"
+                                                       class="btn btn-success btn-sm">
+
+                                                        Open Conversation
+
+                                                    </a>
+                                                </div>
+                                            }
+
+                                            <!-- First Reply Form -->
+                                            @if (inquiry.Status == InquiryStatus.Pending)
+                                            {
+                                                <form asp-controller="OwnerInquiry"
+                                                      asp-action="Reply"
+                                                      method="post">
+
+                                                    <input type="hidden"
+                                                           name="inquiryId"
+                                                           value="@inquiry.Id" />
+
+                                                    <div class="mb-2">
+
+                                                        <label class="form-label fw-semibold">
+                                                            Your Reply
+                                                        </label>
+
+                                                        <textarea name="replyContent"
+                                                                  class="form-control"
+                                                                  rows="4"
+                                                                  maxlength="3000"
+                                                                  placeholder="Write your reply to the tenant..."
+                                                                  required></textarea>
+
+                                                    </div>
+
+                                                    <button type="submit"
+                                                            class="btn btn-primary btn-sm">
+                                                        Send Reply
+                                                    </button>
+
+                                                </form>
+                                            }
+                                            else if (inquiry.Status == InquiryStatus.Responded)
+                                            {
+                                                <span class="text-success small">
+                                                    Reply sent successfully.
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">
+                                                    Reply unavailable.
+                                                </span>
+                                            }
+
+                                        </div>
+
+                                    </td>
+
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

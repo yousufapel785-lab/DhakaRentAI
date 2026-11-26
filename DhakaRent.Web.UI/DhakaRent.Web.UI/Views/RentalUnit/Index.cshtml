@@ -1,0 +1,221 @@
+﻿@model IReadOnlyList<DhakaRent.Entities.Models.RentalUnit>
+
+@{
+    ViewData["Title"] = "Rental Units";
+
+    int floorId = (int)ViewBag.FloorId;
+    int floorNumber = (int)ViewBag.FloorNumber;
+    string floorLabel = (string)ViewBag.FloorLabel;
+    int buildingId = (int)ViewBag.BuildingId;
+    string buildingName = (string)ViewBag.BuildingName;
+    bool isArchived = (bool)ViewBag.IsArchived;
+}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between
+        align-items-center flex-wrap gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Rental Units
+            </h2>
+
+            <p class="text-muted mb-1">
+                Building: <strong>@buildingName</strong>
+            </p>
+
+            <p class="text-muted mb-0">
+                Floor:
+                <strong>
+                    @floorNumber
+                    @if (!string.IsNullOrWhiteSpace(floorLabel))
+                    {
+                        <span>- @floorLabel</span>
+                    }
+                </strong>
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a asp-controller="Floor"
+               asp-action="Index"
+               asp-route-buildingId="@buildingId"
+               class="btn btn-outline-secondary">
+                Back to Floors
+            </a>
+
+            @if (!isArchived)
+            {
+                <a asp-controller="RentalUnit"
+                   asp-action="Create"
+                   asp-route-floorId="@floorId"
+                   class="btn btn-primary">
+                    + Add Rental Unit
+                </a>
+            }
+
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- Archived Building Warning -->
+    @if (isArchived)
+    {
+        <div class="alert alert-warning">
+            This building is archived.
+            Rental units can be viewed but not modified.
+        </div>
+    }
+
+    <!-- Rental Unit List -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0">
+                Rental Unit List (@Model.Count)
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.Count == 0)
+            {
+                <!-- Empty State -->
+                <div class="text-center py-5">
+
+                    <h5>No Rental Units Found</h5>
+
+                    <p class="text-muted">
+                        This floor does not have any
+                        rental units yet.
+                    </p>
+
+                    @if (!isArchived)
+                    {
+                        <a asp-controller="RentalUnit"
+                           asp-action="Create"
+                           asp-route-floorId="@floorId"
+                           class="btn btn-primary">
+                            Add First Rental Unit
+                        </a>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <!-- Data Table -->
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Unit Number</th>
+                                <th>Size (Sq. Ft.)</th>
+                                <th>Monthly Rent</th>
+                                <th>Bedrooms</th>
+                                <th>Bathrooms</th>
+                                <th>Occupancy</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var unit in Model)
+                            {
+                                <tr>
+
+                                    <td class="fw-semibold">
+                                        @unit.UnitNumber
+                                    </td>
+
+                                    <td>
+                                        @unit.SizeInSqFt.ToString("N2")
+                                    </td>
+
+                                    <td>
+                                        ৳@unit.StandardMonthlyRent.ToString("N2")
+                                    </td>
+
+                                    <td>
+                                        @unit.Bedrooms
+                                    </td>
+
+                                    <td>
+                                        @unit.Bathrooms
+                                    </td>
+
+                                    <td>
+                                        @if (unit.OccupancyStatus ==
+                                             DhakaRent.Entities.Enums.UnitOccupancyStatus.Vacant)
+                                        {
+                                            <span class="badge bg-success">
+                                                Vacant
+                                            </span>
+                                        }
+                                        else if (unit.OccupancyStatus ==
+                                                 DhakaRent.Entities.Enums.UnitOccupancyStatus.Occupied)
+                                        {
+                                            <span class="badge bg-primary">
+                                                Occupied
+                                            </span>
+                                        }
+                                        else if (unit.OccupancyStatus ==
+                                                 DhakaRent.Entities.Enums.UnitOccupancyStatus.Maintenance)
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                Maintenance
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                Inactive
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @if (!isArchived)
+                                        {
+                                            <a asp-controller="RentalUnit"
+                                               asp-action="Edit"
+                                               asp-route-id="@unit.Id"
+                                               class="btn btn-sm btn-outline-primary">
+                                                Edit
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                View only
+                                            </span>
+                                        }
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+    </div>
+
+</div>

@@ -24,5 +24,9 @@ namespace DhakaRent.Web.UI.ViewModels
         public bool IsFurnished { get; set; }
 
 
+        // Indicates whether the logged-in Tenant
+        // has saved this property to their wishlist.
+        public bool IsSavedToWishlist { get; set; } = false;
+
     }
 }

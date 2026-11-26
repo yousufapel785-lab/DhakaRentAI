@@ -1,9 +1,10 @@
 
-using DhakaRent.Facade.Services;
 using DhakaRent.DataAccess.Context;
 using DhakaRent.DataAccess.Identity;
 using DhakaRent.DataAccess.Repositories;
+using DhakaRent.DataAccess.Transactions;
 using DhakaRent.Facade.Interfaces;
+using DhakaRent.Facade.Services;
 using DhakaRent.Web.UI.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,28 @@ builder.Services.AddScoped<IFloorFacade, FloorFacade>();
 // Rental Unit Management DI
 builder.Services.AddScoped<IRentalUnitRepository, RentalUnitRepository>();
 builder.Services.AddScoped<IRentalUnitFacade, RentalUnitFacade>();
+
+// Tenant Wishlist Management
+builder.Services.AddScoped<ISavedPropertyRepository, SavedPropertyRepository>();
+builder.Services.AddScoped<ISavedPropertyFacade, SavedPropertyFacade>();
+
+// Property Inquiry Management
+builder.Services.AddScoped<IPropertyInquiryRepository, PropertyInquiryRepository>();
+builder.Services.AddScoped<IPropertyInquiryFacade, PropertyInquiryFacade>();
+
+// Conversation and Messaging
+builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+
+// Database Transaction
+builder.Services.AddScoped<IDatabaseTransactionExecutor, DatabaseTransactionExecutor>();
+
+// Messaging Business Logic
+builder.Services.AddScoped<IMessagingFacade, MessagingFacade>();
+
+// Viewing Request Module
+builder.Services.AddScoped<IViewingRequestRepository, ViewingRequestRepository>();
+builder.Services.AddScoped<IViewingRequestFacade, ViewingRequestFacade>();
 
 // 1. Database Connection
 var connectionString = builder.Configuration

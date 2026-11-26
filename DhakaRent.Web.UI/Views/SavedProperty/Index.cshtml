@@ -1,0 +1,235 @@
+﻿@model IReadOnlyList<DhakaRent.Web.UI.ViewModels.SavedPropertyCardViewModel>
+
+@{
+    ViewData["Title"] = "My Saved Properties";
+}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between
+        align-items-center flex-wrap gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                My Saved Properties
+            </h2>
+
+            <p class="text-muted mb-0">
+                Explore and manage your favorite rental homes.
+            </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+
+            <a asp-controller="Tenant"
+               asp-action="Dashboard"
+               class="btn btn-outline-secondary">
+                Back to Dashboard
+            </a>
+
+            <a asp-controller="Properties"
+               asp-action="Index"
+               class="btn btn-primary">
+                Browse Properties
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- Information Message -->
+    @if (TempData["InfoMessage"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["InfoMessage"]
+        </div>
+    }
+
+    <!-- Error Message -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Saved Properties Count -->
+    <div class="mb-3">
+        <h5 class="fw-semibold">
+            Saved Properties (@Model.Count)
+        </h5>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <!-- Empty Wishlist -->
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body text-center py-5">
+
+                <h5 class="fw-bold">
+                    No Saved Properties Yet
+                </h5>
+
+                <p class="text-muted">
+                    You haven't saved any rental
+                    properties yet.
+                </p>
+
+                <a asp-controller="Properties"
+                   asp-action="Index"
+                   class="btn btn-primary">
+                    Explore Properties
+                </a>
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <!-- Property Cards -->
+        <div class="row g-4">
+
+            @foreach (var property in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <!-- Property Cover Image -->
+                        @if (!string.IsNullOrWhiteSpace(property.ImageUrl))
+                        {
+                            <img src="@Url.Content(property.ImageUrl)"
+                                 class="card-img-top"
+                                 alt="Image of @property.Title"
+                                 loading="lazy"
+                                 style="height: 220px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <!-- Image Placeholder -->
+                            <div class="bg-light d-flex
+                                align-items-center
+                                justify-content-center
+                                text-secondary"
+                                 style="height: 220px;">
+
+                                <div class="text-center">
+                                    <div class="fs-1 mb-2">
+                                        &#127968;
+                                    </div>
+
+                                    <span>
+                                        No Image Available
+                                    </span>
+                                </div>
+
+                            </div>
+                        }
+
+                        <div class="card-body p-4">
+
+                            <!-- Property Title -->
+                            <h5 class="card-title fw-bold mb-2">
+                                @property.Title
+                            </h5>
+
+                            <!-- Area -->
+                            <p class="text-muted mb-2">
+                                &#128205; @property.Area, Dhaka
+                            </p>
+
+                            <!-- Monthly Rent -->
+                            <h4 class="text-success fw-bold mb-3">
+                                ৳@property.MonthlyRent.ToString("N0")
+
+                                <small class="text-muted fs-6 fw-normal">
+                                    / month
+                                </small>
+                            </h4>
+
+                            <!-- Property Features -->
+                            <div class="d-flex flex-wrap gap-3 mb-3">
+
+                                <span class="text-muted small">
+                                    Bedrooms: @property.Bedrooms
+                                </span>
+
+                                <span class="text-muted small">
+                                    Bathrooms: @property.Bathrooms
+                                </span>
+
+                            </div>
+
+                            <!-- Address -->
+                            <p class="text-muted small mb-3">
+                                @property.Address
+                            </p>
+
+                            <!-- Saved Date -->
+                            <p class="text-muted small mb-0">
+                                Saved on:
+                                @property.SavedAt.ToString("dd MMM yyyy")
+                            </p>
+
+                        </div>
+
+                        <!-- Card Footer -->
+                        <div class="card-footer bg-white
+                            border-0 px-4 pb-4 pt-0">
+
+                            <div class="d-flex flex-wrap gap-2">
+
+                                <!-- View Property Details -->
+                                <a asp-controller="Properties"
+                                   asp-action="Details"
+                                   asp-route-id="@property.PropertyId"
+                                   class="btn btn-outline-primary flex-grow-1">
+
+                                    View Details
+
+                                </a>
+
+                                <!-- Remove from Wishlist -->
+                                <form asp-controller="SavedProperty"
+                                      asp-action="Remove"
+                                      method="post"
+                                      class="flex-grow-1">
+
+                                    <input type="hidden"
+                                           name="propertyId"
+                                           value="@property.PropertyId" />
+
+                                    <button type="submit"
+                                            class="btn btn-outline-danger w-100"
+                                            onclick="return confirm('Remove this property from your wishlist?');">
+
+                                        Remove
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

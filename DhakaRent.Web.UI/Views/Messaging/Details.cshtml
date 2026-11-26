@@ -1,0 +1,290 @@
+﻿@model DhakaRent.Web.UI.ViewModels.ConversationDetailsViewModel
+
+@{
+    ViewData["Title"] = "Conversation Details";
+
+    bool initialMessageIsMine =
+        Model.Inquiry.TenantId == Model.CurrentUserId;
+}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between
+        align-items-center flex-wrap gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Conversation Details
+            </h2>
+
+            <p class="text-muted mb-0">
+                Property #@Model.Inquiry.PropertyId
+                | Conversation #@Model.Conversation.Id
+            </p>
+        </div>
+
+        
+        <!-- Conversation Navigation -->
+        <div class="d-flex flex-wrap gap-2">
+
+            <!-- Back to Messaging Inbox -->
+            <a asp-controller="Messaging"
+               asp-action="Index"
+               class="btn btn-primary">
+                Back to Inbox
+            </a>
+
+            <!-- Role-based Inquiry Navigation -->
+            @if (User.IsInRole("PropertyOwner"))
+            {
+                <a asp-controller="OwnerInquiry"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary">
+                    Back to Received Inquiries
+                </a>
+            }
+            else if (User.IsInRole("Tenant"))
+            {
+                <a asp-controller="PropertyInquiry"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary">
+                    Back to My Inquiries
+                </a>
+            }
+
+        </div>
+
+
+    </div>
+
+    <!-- Conversation Card -->
+    <div class="card border-0 shadow-sm">
+
+        <!-- Header -->
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between
+                align-items-center flex-wrap gap-2">
+
+                <div>
+                    <h5 class="fw-bold mb-1">
+                        Tenant &amp; Property Owner
+                    </h5>
+
+                    <small class="text-muted">
+                        Inquiry #@Model.Inquiry.Id
+                    </small>
+                </div>
+
+                @if (Model.Conversation.IsActive)
+                {
+                    <span class="badge bg-success">
+                        Active Conversation
+                    </span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">
+                        Inactive Conversation
+                    </span>
+                }
+
+            </div>
+
+        </div>
+
+        <!-- Chat History -->
+        <div class="card-body p-4"
+             style="min-height: 350px;">
+
+            <!-- Original Tenant Inquiry -->
+            <div class="d-flex mb-4
+                @(initialMessageIsMine
+    ? "justify-content-end"
+    : "justify-content-start")">
+
+                <div style="max-width: 80%;">
+
+                    <div class="mb-1
+                        @(initialMessageIsMine
+    ? "text-end"
+    : "text-start")">
+
+                        <small class="fw-semibold">
+                            @(initialMessageIsMine
+                                ? "You"
+                                : "Tenant")
+                        </small>
+
+                        <small class="text-muted ms-2">
+                            Initial Inquiry
+                        </small>
+
+                    </div>
+
+                    <div class="p-3 rounded-3
+                        @(initialMessageIsMine
+    ? "bg-primary text-white"
+    : "bg-light border")"
+                         style="white-space: pre-wrap;
+                        overflow-wrap: anywhere;">
+                        @Model.Inquiry.InitialMessage
+                    </div>
+
+                    <div class="mt-1
+                        @(initialMessageIsMine
+    ? "text-end"
+    : "text-start")">
+
+                        <small class="text-muted">
+                            @Model.Inquiry.CreatedAt.ToString("dd MMM yyyy, hh:mm tt") UTC
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Saved Messages -->
+            @foreach (var message in Model.Messages)
+            {
+                bool isMine =
+                    message.SenderId == Model.CurrentUserId;
+
+                string senderName = isMine
+                    ? "You"
+                    : message.SenderId == Model.Conversation.TenantId
+                        ? "Tenant"
+                        : "Property Owner";
+
+                <div class="d-flex mb-4
+                    @(isMine
+    ? "justify-content-end"
+    : "justify-content-start")">
+
+                    <div style="max-width: 80%;">
+
+                        <!-- Sender -->
+                        <div class="mb-1
+                            @(isMine
+    ? "text-end"
+    : "text-start")">
+
+                            <small class="fw-semibold">
+                                @senderName
+                            </small>
+
+                        </div>
+
+                        <!-- Message Content -->
+                        <div class="p-3 rounded-3
+                            @(isMine
+    ? "bg-primary text-white"
+    : "bg-light border")"
+                             style="white-space: pre-wrap;
+                            overflow-wrap: anywhere;">
+                            @message.Content
+                        </div>
+
+                        <!-- Message Time -->
+                        <div class="mt-1
+                            @(isMine
+    ? "text-end"
+    : "text-start")">
+
+                            <small class="text-muted">
+                                @message.SentAt.ToString("dd MMM yyyy, hh:mm tt") UTC
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        
+        <!-- Footer: New Message Form -->
+        <div class="card-footer bg-white p-4">
+
+            <!-- Success Message -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            <!-- Error Message -->
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            @if (Model.Conversation.IsActive)
+            {
+                <!-- Send New Message -->
+                <form asp-controller="Messaging"
+                      asp-action="SendMessage"
+                      method="post">
+
+                    <!-- Conversation ID -->
+                    <input type="hidden"
+                           name="conversationId"
+                           value="@Model.Conversation.Id" />
+
+                    <!-- Message Input -->
+                    <div class="mb-3">
+
+                        <label for="messageContent"
+                               class="form-label fw-semibold">
+                            Write a Message
+                        </label>
+
+                        <textarea id="messageContent"
+                                  name="content"
+                                  class="form-control"
+                                  rows="4"
+                                  maxlength="3000"
+                                  placeholder="Type your message here..."
+                                  required></textarea>
+
+                        <div class="form-text">
+                            Maximum 3000 characters.
+                        </div>
+
+                    </div>
+
+                    <!-- Send Button -->
+                    <div class="d-flex justify-content-end">
+
+                        <button type="submit"
+                                class="btn btn-primary px-4">
+                            Send Message
+                        </button>
+
+                    </div>
+
+                </form>
+            }
+            else
+            {
+                <!-- Inactive Conversation -->
+                <div class="alert alert-secondary mb-0">
+                    This conversation is inactive.
+                    New messages cannot be sent.
+                </div>
+            }
+
+        </div>
+
+
+    </div>
+
+</div>

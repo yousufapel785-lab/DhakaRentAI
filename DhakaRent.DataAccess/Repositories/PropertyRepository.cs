@@ -130,5 +130,35 @@ namespace DhakaRent.DataAccess.Repositories
                 .ToListAsync();
         }
 
+        // Retrieve multiple properties using their IDs.
+        // Used by Inquiry, Wishlist and other UI features.
+        public async Task<IReadOnlyDictionary<int, Property>>
+            GetByIdsAsync(IReadOnlyCollection<int> propertyIds)
+        {
+            // Step A: Validate input.
+            ArgumentNullException.ThrowIfNull(propertyIds);
+
+            // Step B: Remove invalid and duplicate IDs.
+            int[] ids = propertyIds
+                .Where(id => id > 0)
+                .Distinct()
+                .ToArray();
+
+            // Step C: Return empty dictionary when no IDs exist.
+            if (ids.Length == 0)
+            {
+                return new Dictionary<int, Property>();
+            }
+
+            // Step D: Retrieve properties in a single query.
+            var properties = await _context.Properties
+                .AsNoTracking()
+                .Where(p => ids.Contains(p.Id))
+                .ToDictionaryAsync(p => p.Id);
+
+            // Step E: Return properties indexed by ID.
+            return properties;
+        }
+
     }
 }

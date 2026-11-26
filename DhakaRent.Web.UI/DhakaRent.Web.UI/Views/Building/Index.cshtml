@@ -1,0 +1,170 @@
+﻿@model IReadOnlyList<DhakaRent.Entities.Models.Building>
+
+@{
+    ViewData["Title"] = "My Buildings";
+}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between
+        align-items-center flex-wrap gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">My Buildings</h2>
+            <p class="text-muted mb-0">
+                Manage your rental property portfolio.
+            </p>
+        </div>
+
+        <a asp-controller="Building"
+           asp-action="Create"
+           class="btn btn-primary">
+            + Add New Building
+        </a>
+    </div>
+
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- Building List -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0">
+                Building Portfolio (@Model.Count)
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.Count == 0)
+            {
+                <div class="text-center py-5">
+                    <h5>No Buildings Added Yet</h5>
+
+                    <p class="text-muted">
+                        Start managing your portfolio
+                        by adding your first building.
+                    </p>
+
+                    <a asp-controller="Building"
+                       asp-action="Create"
+                       class="btn btn-primary">
+                        Add Your First Building
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Building Name</th>
+                                <th>Area</th>
+                                <th>Address</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var building in Model)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">
+                                        @building.Name
+                                    </td>
+
+                                    <td>@building.Area</td>
+
+                                    <td>@building.Address</td>
+
+                                    <td>
+                                        @if (building.IsArchived)
+                                        {
+                                            <span class="badge bg-secondary">
+                                                Archived
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">
+                                                Active
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @building.CreatedAtUtc.ToString("dd MMM yyyy")
+                                    </td>
+
+                                    
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-2">
+
+                                            <!-- Manage Floors -->
+                                            <a asp-controller="Floor"
+                                               asp-action="Index"
+                                               asp-route-buildingId="@building.Id"
+                                               class="btn btn-sm btn-outline-success">
+                                                Manage Floors
+                                            </a>
+
+                                            @if (!building.IsArchived)
+                                            {
+                                                <!-- Edit Building -->
+                                                <a asp-controller="Building"
+                                                   asp-action="Edit"
+                                                   asp-route-id="@building.Id"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    Edit
+                                                </a>
+
+                                                <!-- Archive Building -->
+                                                <form asp-controller="Building"
+                                                      asp-action="Archive"
+                                                      asp-route-id="@building.Id"
+                                                      method="post">
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-danger"
+                                                            onclick="return confirm('Archive this building?');">
+                                                        Archive
+                                                    </button>
+
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">
+                                                    View Only
+                                                </span>
+                                            }
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
