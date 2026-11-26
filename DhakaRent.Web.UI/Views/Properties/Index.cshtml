@@ -18,12 +18,12 @@
            MAIN DARK BACKGROUND
         ============================ */
 
-    .rent-browse {
-        min-height: 100vh;
-        padding: 32px 0 70px;
-        color: #f1f5f9;
-        background: radial-gradient( circle at top right, rgba(20, 184, 166, 0.15), transparent 35% ), linear-gradient( 145deg, #081425 0%, #10233b 55%, #0b1729 100% );
-    }
+    <div class="mb-4">
+        <h1>Browse properties</h1>
+        <p class="text-muted">
+            <img src="~/icons/shield-check.svg" width="18" height="18" alt="" /> Listings are reviewed before they appear here.
+        </p>
+    </div>
 
     /* ============================
            HERO SECTION
@@ -39,30 +39,7 @@
         box-shadow: 0 14px 35px rgba(0, 0, 0, 0.18);
     }
 
-        .browse-hero::after {
-            content: "";
-            position: absolute;
-            width: 230px;
-            height: 230px;
-            right: -70px;
-            top: -100px;
-            border-radius: 50%;
-            background: rgba(45, 212, 191, 0.10);
-            pointer-events: none;
-        }
-
-    .browse-eyebrow {
-        display: inline-block;
-        padding: 7px 13px;
-        border-radius: 30px;
-        background: rgba(45, 212, 191, 0.13);
-        color: #5eead4;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.7px;
-        text-transform: uppercase;
-        margin-bottom: 15px;
-    }
+            <h2 class="h5 mb-3">Filter listings</h2>
 
     .browse-hero h1 {
         color: #ffffff;
@@ -653,296 +630,35 @@
                    asp-action="Index"
                    class="browse-wishlist-link">
 
-                    <span aria-hidden="true">♥</span>
-
-                    My Wishlist
-
-                </a>
-            }
-
-        </div>
-
-        <!-- ========================
-             PROPERTY RESULTS
-        ========================= -->
-        @if (!Model.Properties.Any())
-        {
-            <div class="browse-empty-state">
-                <h5 class="fw-bold mb-2">
-                    No Properties Found
-                </h5>
-
-                <p class="mb-0">
-                    No properties match your current filters.
-                    Try changing the area, rent or property type.
-                </p>
-            </div>
-        }
-        else
-        {
-            <div class="row g-4">
-
-                @foreach (var item in Model.Properties)
-                {
-                    <div class="col-md-6 col-xl-4">
-
-                        <div class="browse-rental-card">
-
-                            <div class="p-4 h-100 d-flex flex-column">
-
-                                <!-- ========================
-                                     TITLE AND HEART
-                                ========================= -->
-                                <div class="d-flex justify-content-between
-                                    align-items-start gap-3 mb-3">
-
-                                    <div class="flex-grow-1">
-
-                                        <h5 class="browse-property-name mb-2">
-                                            @item.Title
-                                        </h5>
-
-                                        <div class="browse-property-area">
-                                            @item.Area, Dhaka
-                                        </div>
-
-                                    </div>
-
-                                    <!-- Tenant Wishlist Reaction -->
-                                    @if (isTenant)
-                                    {
-                                        @if (item.IsSavedToWishlist)
-                                        {
-                                            <!-- FILLED RED HEART -->
-                                            <form asp-controller="SavedProperty"
-                                                  asp-action="Remove"
-                                                  method="post"
-                                                  class="browse-heart-form"
-                                                  onsubmit="return confirm('Remove this property from your wishlist?');">
-
-                                                @Html.AntiForgeryToken()
-
-                                                <input type="hidden"
-                                                       name="propertyId"
-                                                       value="@item.Id" />
-
-                                                <input type="hidden"
-                                                       name="returnUrl"
-                                                       value="@returnUrl" />
-
-                                                <button type="submit"
-                                                        class="browse-heart-button is-saved"
-                                                        title="Remove from Wishlist"
-                                                        aria-label="Remove @item.Title from wishlist"
-                                                        aria-pressed="true">
-
-                                                    <!-- Inline SVG: Filled Heart -->
-                                                    <svg viewBox="0 0 24 24"
-                                                         width="29"
-                                                         height="29"
-                                                         xmlns="http://www.w3.org/2000/svg"
-                                                         aria-hidden="true"
-                                                         focusable="false">
-
-                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                                                              fill="#ff466a"
-                                                              stroke="#ff466a"
-                                                              stroke-width="1.2" />
-
-                                                    </svg>
-
-                                                </button>
-
-                                            </form>
-                                        }
-                                        else
-                                        {
-                                            <!-- OUTLINE HEART -->
-                                            <form asp-controller="SavedProperty"
-                                                  asp-action="Save"
-                                                  method="post"
-                                                  class="browse-heart-form">
-
-                                                @Html.AntiForgeryToken()
-
-                                                <input type="hidden"
-                                                       name="propertyId"
-                                                       value="@item.Id" />
-
-                                                <input type="hidden"
-                                                       name="returnUrl"
-                                                       value="@returnUrl" />
-
-                                                <button type="submit"
-                                                        class="browse-heart-button"
-                                                        title="Save to Wishlist"
-                                                        aria-label="Save @item.Title to wishlist"
-                                                        aria-pressed="false">
-
-                                                    <!-- Inline SVG: Outline Heart -->
-                                                    <svg viewBox="0 0 24 24"
-                                                         width="29"
-                                                         height="29"
-                                                         xmlns="http://www.w3.org/2000/svg"
-                                                         aria-hidden="true"
-                                                         focusable="false">
-
-                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                                                              fill="none"
-                                                              stroke="#fb7185"
-                                                              stroke-width="2"
-                                                              stroke-linejoin="round" />
-
-                                                    </svg>
-
-                                                </button>
-
-                                            </form>
-                                        }
-                                    }
-
-                                </div>
-
-                                <!-- ========================
-                                     SAVED STATUS LABEL
-                                ========================= -->
-                                @if (isTenant)
-                                {
-                                    <div class="mb-3">
-
-                                        @if (item.IsSavedToWishlist)
-                                        {
-                                            <span class="browse-saved-label">
-                                                <span aria-hidden="true">♥</span>
-                                                Saved to Wishlist
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="browse-not-saved-label">
-                                                Not Saved
-                                            </span>
-                                        }
-
-                                    </div>
-                                }
-
-                                <!-- ========================
-                                     ADDRESS
-                                ========================= -->
-                                <div class="browse-address mb-2">
-
-                                    <strong>Address:</strong>
-                                    @item.Address
-
-                                </div>
-
-                                <!-- ========================
-                                     PROPERTY FACTS
-                                ========================= -->
-                                <div class="browse-facts">
-
-                                    <div class="browse-fact">
-
-                                        <span class="browse-fact-label">
-                                            Property Type
-                                        </span>
-
-                                        <span class="browse-fact-value">
-                                            @item.PropertyType
-                                        </span>
-
-                                    </div>
-
-                                    <div class="browse-fact">
-
-                                        <span class="browse-fact-label">
-                                            Size
-                                        </span>
-
-                                        <span class="browse-fact-value">
-                                            @item.SizeInSqFt.ToString("N0") sqft
-                                        </span>
-
-                                    </div>
-
-                                    <div class="browse-fact">
-
-                                        <span class="browse-fact-label">
-                                            Bedrooms
-                                        </span>
-
-                                        <span class="browse-fact-value">
-                                            @item.Bedrooms
-                                        </span>
-
-                                    </div>
-
-                                    <div class="browse-fact">
-
-                                        <span class="browse-fact-label">
-                                            Bathrooms
-                                        </span>
-
-                                        <span class="browse-fact-value">
-                                            @item.Bathrooms
-                                        </span>
-
-                                    </div>
-
-                                    <div class="browse-fact"
-                                         style="grid-column: 1 / -1;">
-
-                                        <span class="browse-fact-label">
-                                            Furnishing
-                                        </span>
-
-                                        <span class="browse-fact-value">
-
-                                            @(item.IsFurnished
-                                                ? "Furnished"
-                                                : "Unfurnished")
-
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                                <!-- ========================
-                                     RENT AND DETAILS
-                                ========================= -->
-                                <div class="browse-price-section">
-
-                                    <div class="browse-price">
-
-                                        ৳@item.MonthlyRent.ToString("N0")
-
-                                        <small>/ month</small>
-
-                                    </div>
-
-                                    <a asp-controller="Properties"
-                                       asp-action="Details"
-                                       asp-route-id="@item.Id"
-                                       class="browse-view-button">
-
-                                        View Property Details
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                }
-
-            </div>
-        }
-
+    <div class="result-heading">
+        <h2 class="h4">Available rentals</h2>
+        <span class="text-muted">@Model.Properties.Count @(Model.Properties.Count == 1 ? "listing" : "listings")</span>
     </div>
-
+    @if (!Model.Properties.Any())
+    {
+        <div class="alert alert-info">No rentals match these filters. Try a different area or a wider budget.</div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var item in Model.Properties)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <article class="card listing-card h-100">
+                        <div class="card-body">
+                            <span class="listing-type">@item.PropertyType</span>
+                            <h3 class="card-title h4">@item.Title</h3>
+                            <p class="text-muted mb-0">@item.Address · @item.Area, Dhaka</p>
+                            <p class="listing-specs">@item.Bedrooms bed · @item.Bathrooms bath · @item.SizeInSqFt.ToString("N0") sqft<br />
+                                @(item.IsFurnished ? "Furnished" : "Unfurnished")
+                            </p>
+                            <p class="listing-rent">৳@item.MonthlyRent.ToString("N0") <small>/ month</small></p>
+                            <a asp-controller="Properties" asp-action="Details" asp-route-id="@item.Id"
+                               class="btn btn-outline-primary" aria-label="View details for @item.Title">View details</a>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    }
 </div>
