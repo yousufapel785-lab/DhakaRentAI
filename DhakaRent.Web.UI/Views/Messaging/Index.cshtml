@@ -1,0 +1,302 @@
+﻿@model IReadOnlyList<DhakaRent.Entities.Models.Conversation>
+
+@{
+    ViewData["Title"] = "My Conversations";
+
+    bool isOwner = User.IsInRole("PropertyOwner");
+
+    // Total unread incoming messages
+    int unreadMessageCount =
+        ViewData["UnreadMessageCount"] is int count
+            ? count
+            : 0;
+
+    // Unread counts per conversation
+    // Key = Conversation ID
+    // Value = Unread Count
+    var unreadCountsByConversation =
+        ViewData["UnreadCountsByConversation"]
+            as Dictionary<int, int>
+        ?? new Dictionary<int, int>();
+
+    // Latest message previews
+    // Key = Conversation ID
+    // Value = Latest Message Content
+    var latestMessagePreviews =
+        ViewData["LatestMessagePreviews"]
+            as Dictionary<int, string>
+        ?? new Dictionary<int, string>();
+}
+
+
+
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between
+        align-items-center flex-wrap gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                My Conversations
+            </h2>
+
+            <p class="text-muted mb-0">
+                View your conversations and messages
+                about rental properties.
+            </p>
+        </div>
+
+        <!-- Role-based Dashboard Navigation -->
+        @if (isOwner)
+        {
+            <a asp-controller="PropertyOwner"
+               asp-action="Dashboard"
+               class="btn btn-outline-secondary">
+                Back to Owner Dashboard
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Tenant"
+               asp-action="Dashboard"
+               class="btn btn-outline-secondary">
+                Back to Tenant Dashboard
+            </a>
+        }
+
+    </div>
+
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- Conversation List -->
+    <div class="card border-0 shadow-sm">
+
+        
+        <!-- Conversation List Header with Unread Count -->
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between
+                align-items-center flex-wrap gap-2">
+
+                <!-- Conversation Count -->
+                <h5 class="fw-bold mb-0">
+                    Conversations (@Model.Count)
+                </h5>
+
+                <!-- Total Unread Messages -->
+                @if (unreadMessageCount > 0)
+                {
+                    <span class="badge bg-danger fs-6">
+                        @unreadMessageCount Unread
+                    </span>
+                }
+                else
+                {
+                    <small class="text-muted">
+                        All messages read
+                    </small>
+                }
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            @if (Model.Count == 0)
+            {
+                <!-- Empty Inbox -->
+                <div class="text-center py-5">
+
+                    <h5 class="fw-bold">
+                        No Conversations Yet
+                    </h5>
+
+                    <p class="text-muted">
+                        Your property-related conversations
+                        will appear here.
+                    </p>
+
+                    @if (isOwner)
+                    {
+                        <a asp-controller="OwnerInquiry"
+                           asp-action="Index"
+                           class="btn btn-primary">
+                            View Received Inquiries
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="PropertyInquiry"
+                           asp-action="Index"
+                           class="btn btn-primary">
+                            View My Inquiries
+                        </a>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <!-- Conversations -->
+                <div class="row g-3">
+
+                    @foreach (var conversation in Model)
+                    {
+                        DateTime lastActivity =
+                            conversation.LastMessageAt
+                            ?? conversation.CreatedAt;
+
+                        <div class="col-12">
+
+                            <div class="card border">
+
+                                <div class="card-body">
+
+                                    <div class="d-flex
+                                        justify-content-between
+                                        align-items-start
+                                        flex-wrap gap-3">
+
+                                        <!-- Conversation Information -->
+                                        <div>
+
+                                            <h5 class="fw-bold mb-2">
+                                                Conversation #@conversation.Id
+                                            </h5>
+
+                                            <p class="text-muted mb-2">
+                                                Inquiry #@conversation.PropertyInquiryId
+                                            </p>
+
+                                            
+                                            <!-- Conversation Participant -->
+                                            <p class="mb-2">
+                                                <strong>Chatting with:</strong>
+
+                                                @(isOwner
+                                                    ? "Tenant"
+                                                    : "Property Owner")
+                                            </p>
+
+                                            <!-- Latest Message Preview -->
+                                            @if (latestMessagePreviews.TryGetValue(
+                                                conversation.Id, out string? latestMessage)
+                                                && !string.IsNullOrWhiteSpace(latestMessage))
+                                            {
+                                                // Remove surrounding whitespace.
+                                                string preview = latestMessage.Trim();
+
+                                                // Display a maximum of 120 characters.
+                                                if (preview.Length > 120)
+                                                {
+                                                    preview = preview.Substring(0, 120) + "...";
+                                                }
+
+                                                <div class="mb-2">
+
+                                                    <small class="fw-semibold text-muted">
+                                                        Latest Message:
+                                                    </small>
+
+                                                    <p class="mb-0 text-break"
+                                                       style="overflow-wrap: anywhere;">
+                                                        @preview
+                                                    </p>
+
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <!-- No saved chat message available -->
+                                                <p class="text-muted small mb-2">
+                                                    No chat replies yet.
+                                                </p>
+                                            }
+
+                                            <!-- Last Activity -->
+                                            <p class="text-muted small mb-0">
+
+                                                Last Activity:
+                                                @lastActivity.ToString("dd MMM yyyy, hh:mm tt")
+                                                UTC
+
+                                            </p>
+
+
+                                        </div>
+
+                                        
+                                        <!-- Status, Unread Count and Action -->
+                                        <div class="d-flex flex-column
+                                            align-items-start gap-3">
+
+                                            <!-- Conversation Status -->
+                                            @if (conversation.IsActive)
+                                            {
+                                                <span class="badge bg-success">
+                                                    Active
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">
+                                                    Inactive
+                                                </span>
+                                            }
+
+                                            <!-- Per-Conversation Unread Message Count -->
+                                            @if (unreadCountsByConversation.TryGetValue(
+                                                conversation.Id, out int itemUnreadCount)
+                                                && itemUnreadCount > 0)
+                                            {
+                                                <span class="badge bg-danger">
+                                                    @itemUnreadCount Unread
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <small class="text-muted">
+                                                    All read
+                                                </small>
+                                            }
+
+                                            <!-- Open Conversation -->
+                                            <a asp-controller="Messaging"
+                                               asp-action="Details"
+                                               asp-route-id="@conversation.Id"
+                                               class="btn btn-primary">
+
+                                                Open Conversation
+
+                                            </a>
+
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

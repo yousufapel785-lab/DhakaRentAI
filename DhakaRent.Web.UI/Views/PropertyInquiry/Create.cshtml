@@ -1,0 +1,111 @@
+﻿@model DhakaRent.Web.UI.ViewModels.PropertyInquiryFormViewModel
+
+@{
+    ViewData["Title"] = "Contact Property Owner";
+
+    int propertyId = (int)ViewBag.PropertyId;
+    string propertyTitle = (string)ViewBag.PropertyTitle;
+}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-2">
+            Contact Property Owner
+        </h2>
+
+        <p class="text-muted mb-0">
+            Ask the property owner a question
+            about this rental property.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <!-- Property Information -->
+                    <div class="mb-4">
+
+                        <h5 class="fw-bold mb-2">
+                            Property Information
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Property:
+                            <strong>@propertyTitle</strong>
+                        </p>
+
+                    </div>
+
+                    <hr />
+
+                    <!-- Contact Owner Form -->
+                    <form asp-controller="PropertyInquiry"
+                          asp-action="Create"
+                          asp-route-propertyId="@propertyId"
+                          method="post">
+
+                        <!-- General Validation Errors -->
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <!-- Initial Message -->
+                        <div class="mb-4">
+
+                            <label asp-for="InitialMessage"
+                                   class="form-label fw-semibold">
+                            </label>
+
+                            <textarea asp-for="InitialMessage"
+                                      class="form-control"
+                                      rows="6"
+                                      maxlength="2000"
+                                      placeholder="Hello, is this property still available? I would like to know more about it."></textarea>
+
+                            <div class="form-text">
+                                Maximum 2,000 characters.
+                            </div>
+
+                            <span asp-validation-for="InitialMessage"
+                                  class="text-danger small">
+                            </span>
+
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-wrap gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                Send Inquiry
+                            </button>
+
+                            <a asp-controller="Properties"
+                               asp-action="Details"
+                               asp-route-id="@propertyId"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

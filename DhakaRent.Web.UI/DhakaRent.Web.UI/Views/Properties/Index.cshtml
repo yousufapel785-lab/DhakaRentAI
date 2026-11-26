@@ -1,0 +1,948 @@
+﻿@model DhakaRent.Web.UI.ViewModels.PublicPropertySearchViewModel
+@using DhakaRent.Entities.Enums
+
+@{
+    ViewData["Title"] = "Browse Properties";
+
+    bool isTenant =
+        User.Identity?.IsAuthenticated == true &&
+        User.IsInRole("Tenant");
+
+    // Preserve current filters for the next redirect step.
+    string returnUrl =
+        $"{Context.Request.Path}{Context.Request.QueryString}";
+}
+
+<style>
+    /* ============================
+           MAIN DARK BACKGROUND
+        ============================ */
+
+    .rent-browse {
+        min-height: 100vh;
+        padding: 32px 0 70px;
+        color: #f1f5f9;
+        background: radial-gradient( circle at top right, rgba(20, 184, 166, 0.15), transparent 35% ), linear-gradient( 145deg, #081425 0%, #10233b 55%, #0b1729 100% );
+    }
+
+    /* ============================
+           HERO SECTION
+        ============================ */
+
+    .browse-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 32px;
+        border-radius: 22px;
+        border: 1px solid rgba(94, 234, 212, 0.22);
+        background: linear-gradient( 110deg, #153b51, #10253e 70% );
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.18);
+    }
+
+        .browse-hero::after {
+            content: "";
+            position: absolute;
+            width: 230px;
+            height: 230px;
+            right: -70px;
+            top: -100px;
+            border-radius: 50%;
+            background: rgba(45, 212, 191, 0.10);
+            pointer-events: none;
+        }
+
+    .browse-eyebrow {
+        display: inline-block;
+        padding: 7px 13px;
+        border-radius: 30px;
+        background: rgba(45, 212, 191, 0.13);
+        color: #5eead4;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+    }
+
+    .browse-hero h1 {
+        color: #ffffff;
+        font-weight: 800;
+        font-size: clamp(27px, 4vw, 39px);
+        line-height: 1.25;
+    }
+
+    .browse-hero p {
+        color: #bdcede;
+        font-size: 15px;
+        margin-bottom: 0;
+    }
+
+    /* ============================
+           FILTER PANEL
+        ============================ */
+
+    .browse-filter-card {
+        background: #14263d;
+        border: 1px solid #29445e;
+        border-radius: 20px;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.13);
+    }
+
+        .browse-filter-card h5 {
+            color: #f8fafc;
+            font-weight: 700;
+        }
+
+        .browse-filter-card .form-label {
+            color: #cbd5e1;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .browse-filter-card .form-control,
+        .browse-filter-card .form-select {
+            background-color: #0d1c30;
+            color: #f8fafc;
+            border: 1px solid #39516c;
+            border-radius: 10px;
+            min-height: 45px;
+        }
+
+            .browse-filter-card .form-control::placeholder {
+                color: #8295ad;
+                opacity: 1;
+            }
+
+            .browse-filter-card .form-control:focus,
+            .browse-filter-card .form-select:focus {
+                background-color: #102138;
+                color: #ffffff;
+                border-color: #2dd4bf;
+                box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
+            }
+
+            .browse-filter-card .form-select option {
+                background: #102138;
+                color: #ffffff;
+            }
+
+    .browse-search-btn {
+        background: #2dd4bf;
+        border: 1px solid #2dd4bf;
+        color: #062c32;
+        border-radius: 10px;
+        font-weight: 700;
+        padding: 11px 22px;
+    }
+
+        .browse-search-btn:hover {
+            background: #5eead4;
+            border-color: #5eead4;
+            color: #062c32;
+        }
+
+    .browse-clear-btn {
+        border: 1px solid #64748b;
+        border-radius: 10px;
+        color: #e2e8f0;
+        padding: 11px 22px;
+        font-weight: 600;
+    }
+
+        .browse-clear-btn:hover {
+            background: #253c55;
+            border-color: #94a3b8;
+            color: #ffffff;
+        }
+
+    /* ============================
+           RESULTS HEADER
+        ============================ */
+
+    .browse-results-title {
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 24px;
+    }
+
+    .browse-results-count {
+        color: #a9bdd0;
+        font-size: 14px;
+    }
+
+    .browse-wishlist-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 17px;
+        border: 1px solid #fb7185;
+        border-radius: 11px;
+        background: rgba(244, 63, 94, 0.09);
+        color: #fda4af;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+        .browse-wishlist-link:hover {
+            background: rgba(244, 63, 94, 0.20);
+            color: #ffffff;
+        }
+
+    /* ============================
+           PROPERTY CARDS
+        ============================ */
+
+    .browse-rental-card {
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        border: 1px solid #2c4963;
+        border-radius: 20px;
+        background: linear-gradient( 180deg, #1b334d 0%, #13263e 100% );
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+
+        .browse-rental-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 4px;
+            background: linear-gradient( 90deg, #14b8a6, #38bdf8, #fb7185 );
+        }
+
+        .browse-rental-card:hover {
+            transform: translateY(-5px);
+            border-color: #2dd4bf;
+            box-shadow: 0 18px 42px rgba(0, 0, 0, 0.26);
+        }
+
+    .browse-property-name {
+        color: #f8fafc;
+        font-size: 19px;
+        font-weight: 750;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    .browse-property-area {
+        color: #a8c0d5;
+        font-size: 13px;
+    }
+
+    /* ============================
+           HEART REACTION
+        ============================ */
+
+    .browse-heart-form {
+        flex-shrink: 0;
+        margin: 0;
+    }
+
+    .browse-heart-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        border: 2px solid #fb7185;
+        background: rgba(251, 113, 133, 0.10);
+        cursor: pointer;
+        padding: 0;
+        transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .browse-heart-button svg {
+            display: block;
+            width: 29px;
+            height: 29px;
+            flex-shrink: 0;
+        }
+
+        .browse-heart-button:hover {
+            transform: scale(1.10);
+            background: rgba(251, 113, 133, 0.24);
+            box-shadow: 0 0 18px rgba(251, 113, 133, 0.20);
+        }
+
+        .browse-heart-button:focus-visible {
+            outline: 3px solid #5eead4;
+            outline-offset: 3px;
+        }
+
+        /* SAVED: Filled red heart and bright background */
+        .browse-heart-button.is-saved {
+            border-color: #ff466a;
+            background: rgba(255, 70, 106, 0.20);
+            box-shadow: 0 0 0 5px rgba(255, 70, 106, 0.07);
+        }
+
+            .browse-heart-button.is-saved:hover {
+                background: rgba(255, 70, 106, 0.30);
+            }
+
+    .browse-saved-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 30px;
+        background: rgba(16, 185, 129, 0.14);
+        border: 1px solid rgba(52, 211, 153, 0.25);
+        color: #6ee7b7;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .browse-not-saved-label {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 30px;
+        background: rgba(148, 163, 184, 0.12);
+        border: 1px solid rgba(148, 163, 184, 0.17);
+        color: #cbd5e1;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    /* ============================
+           PROPERTY INFORMATION
+        ============================ */
+
+    .browse-address {
+        color: #b5c8d9;
+        line-height: 1.6;
+        font-size: 13px;
+        overflow-wrap: anywhere;
+    }
+
+    .browse-facts {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .browse-fact {
+        background: rgba(7, 19, 35, 0.34);
+        border: 1px solid rgba(148, 163, 184, 0.13);
+        border-radius: 11px;
+        padding: 11px;
+        min-width: 0;
+    }
+
+    .browse-fact-label {
+        display: block;
+        font-size: 11px;
+        color: #95adc5;
+        margin-bottom: 5px;
+    }
+
+    .browse-fact-value {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #f1f5f9;
+        overflow-wrap: anywhere;
+    }
+
+    /* ============================
+           PRICE AND DETAILS BUTTON
+        ============================ */
+
+    .browse-price-section {
+        margin-top: auto;
+        padding-top: 18px;
+    }
+
+    .browse-price {
+        font-size: 26px;
+        font-weight: 800;
+        color: #5eead4;
+    }
+
+        .browse-price small {
+            font-size: 13px;
+            font-weight: 500;
+            color: #a8c0d5;
+        }
+
+    .browse-view-button {
+        display: block;
+        width: 100%;
+        margin-top: 13px;
+        padding: 12px 16px;
+        border-radius: 11px;
+        background: linear-gradient(100deg, #2dd4bf, #22c1d6);
+        color: #062c32;
+        font-size: 14px;
+        font-weight: 800;
+        text-align: center;
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .browse-view-button:hover {
+            color: #062c32;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(45, 212, 191, 0.25);
+        }
+
+        .browse-view-button:focus-visible {
+            outline: 3px solid #f8fafc;
+            outline-offset: 3px;
+        }
+
+    /* ============================
+           EMPTY STATE
+        ============================ */
+
+    .browse-empty-state {
+        background: #172c44;
+        border: 1px solid #33516c;
+        border-radius: 16px;
+        padding: 30px;
+        color: #d4e5f2;
+    }
+
+    /* ============================
+           RESPONSIVE
+        ============================ */
+
+    @@media (max-width: 767px) {
+        .browse-hero {
+            padding: 23px;
+        }
+
+        .browse-results-title {
+            font-size: 21px;
+        }
+
+        .browse-filter-actions {
+            flex-direction: column;
+        }
+
+            .browse-filter-actions .btn {
+                width: 100%;
+            }
+    }
+
+    @@media (max-width: 380px) {
+        .browse-facts {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .browse-rental-card,
+        .browse-heart-button,
+        .browse-view-button {
+            transition: none;
+        }
+
+            .browse-rental-card:hover,
+            .browse-heart-button:hover,
+            .browse-view-button:hover {
+                transform: none;
+            }
+    }
+</style>
+
+<div class="rent-browse">
+
+    <div class="container">
+
+        <!-- ========================
+             HERO HEADER
+        ========================= -->
+        <div class="browse-hero mb-4">
+
+            <span class="browse-eyebrow">
+                DHAKARENT AI · FIND YOUR HOME
+            </span>
+
+            <h1 class="mb-3">
+                Explore Your Next Home
+            </h1>
+
+            <p>
+                Discover verified rental listings across Dhaka.
+                Search, compare and save your favorite properties.
+            </p>
+
+        </div>
+
+        <!-- ========================
+             NOTIFICATIONS
+        ========================= -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["InfoMessage"] != null)
+        {
+            <div class="alert alert-info" role="alert">
+                @TempData["InfoMessage"]
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- ========================
+             SEARCH FILTERS
+        ========================= -->
+        <div class="browse-filter-card mb-5">
+
+            <div class="p-4">
+
+                <h5 class="mb-4">
+                    Search &amp; Filter Properties
+                </h5>
+
+                <form asp-controller="Properties"
+                      asp-action="Index"
+                      method="get">
+
+                    <div asp-validation-summary="All"
+                         class="text-danger mb-3">
+                    </div>
+
+                    <div class="row g-3">
+
+                        <!-- Area -->
+                        <div class="col-md-4">
+
+                            <label asp-for="Area"
+                                   class="form-label">
+                                Area
+                            </label>
+
+                            <input asp-for="Area"
+                                   class="form-control"
+                                   placeholder="e.g. Mirpur, Uttara" />
+
+                        </div>
+
+                        <!-- Property Type -->
+                        <div class="col-md-4">
+
+                            <label asp-for="PropertyType"
+                                   class="form-label">
+                                Property Type
+                            </label>
+
+                            <select asp-for="PropertyType"
+                                    asp-items="Html.GetEnumSelectList<PropertyType>()"
+                                    class="form-select">
+
+                                <option value="">
+                                    All Property Types
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Bedrooms -->
+                        <div class="col-md-4">
+
+                            <label asp-for="Bedrooms"
+                                   class="form-label">
+                                Bedrooms
+                            </label>
+
+                            <input asp-for="Bedrooms"
+                                   type="number"
+                                   min="0"
+                                   step="1"
+                                   class="form-control"
+                                   placeholder="Any" />
+
+                        </div>
+
+                        <!-- Minimum Rent -->
+                        <div class="col-md-6">
+
+                            <label asp-for="MinRent"
+                                   class="form-label">
+                                Minimum Rent (BDT)
+                            </label>
+
+                            <input asp-for="MinRent"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   class="form-control"
+                                   placeholder="Minimum rent" />
+
+                        </div>
+
+                        <!-- Maximum Rent -->
+                        <div class="col-md-6">
+
+                            <label asp-for="MaxRent"
+                                   class="form-label">
+                                Maximum Rent (BDT)
+                            </label>
+
+                            <input asp-for="MaxRent"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   class="form-control"
+                                   placeholder="Maximum rent" />
+
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap
+                        browse-filter-actions mt-4">
+
+                        <button type="submit"
+                                class="btn browse-search-btn">
+                            Search Properties
+                        </button>
+
+                        <a asp-controller="Properties"
+                           asp-action="Index"
+                           class="btn browse-clear-btn">
+                            Clear Filters
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- ========================
+             RESULTS HEADER
+        ========================= -->
+        <div class="d-flex justify-content-between
+            align-items-center flex-wrap gap-3 mb-4">
+
+            <div>
+
+                <h3 class="browse-results-title mb-1">
+                    Available Properties
+                </h3>
+
+                <div class="browse-results-count">
+                    @Model.Properties.Count properties found
+                </div>
+
+            </div>
+
+            @if (isTenant)
+            {
+                <a asp-controller="SavedProperty"
+                   asp-action="Index"
+                   class="browse-wishlist-link">
+
+                    <span aria-hidden="true">♥</span>
+
+                    My Wishlist
+
+                </a>
+            }
+
+        </div>
+
+        <!-- ========================
+             PROPERTY RESULTS
+        ========================= -->
+        @if (!Model.Properties.Any())
+        {
+            <div class="browse-empty-state">
+                <h5 class="fw-bold mb-2">
+                    No Properties Found
+                </h5>
+
+                <p class="mb-0">
+                    No properties match your current filters.
+                    Try changing the area, rent or property type.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+
+                @foreach (var item in Model.Properties)
+                {
+                    <div class="col-md-6 col-xl-4">
+
+                        <div class="browse-rental-card">
+
+                            <div class="p-4 h-100 d-flex flex-column">
+
+                                <!-- ========================
+                                     TITLE AND HEART
+                                ========================= -->
+                                <div class="d-flex justify-content-between
+                                    align-items-start gap-3 mb-3">
+
+                                    <div class="flex-grow-1">
+
+                                        <h5 class="browse-property-name mb-2">
+                                            @item.Title
+                                        </h5>
+
+                                        <div class="browse-property-area">
+                                            @item.Area, Dhaka
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Tenant Wishlist Reaction -->
+                                    @if (isTenant)
+                                    {
+                                        @if (item.IsSavedToWishlist)
+                                        {
+                                            <!-- FILLED RED HEART -->
+                                            <form asp-controller="SavedProperty"
+                                                  asp-action="Remove"
+                                                  method="post"
+                                                  class="browse-heart-form"
+                                                  onsubmit="return confirm('Remove this property from your wishlist?');">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="propertyId"
+                                                       value="@item.Id" />
+
+                                                <input type="hidden"
+                                                       name="returnUrl"
+                                                       value="@returnUrl" />
+
+                                                <button type="submit"
+                                                        class="browse-heart-button is-saved"
+                                                        title="Remove from Wishlist"
+                                                        aria-label="Remove @item.Title from wishlist"
+                                                        aria-pressed="true">
+
+                                                    <!-- Inline SVG: Filled Heart -->
+                                                    <svg viewBox="0 0 24 24"
+                                                         width="29"
+                                                         height="29"
+                                                         xmlns="http://www.w3.org/2000/svg"
+                                                         aria-hidden="true"
+                                                         focusable="false">
+
+                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                                                              fill="#ff466a"
+                                                              stroke="#ff466a"
+                                                              stroke-width="1.2" />
+
+                                                    </svg>
+
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <!-- OUTLINE HEART -->
+                                            <form asp-controller="SavedProperty"
+                                                  asp-action="Save"
+                                                  method="post"
+                                                  class="browse-heart-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="propertyId"
+                                                       value="@item.Id" />
+
+                                                <input type="hidden"
+                                                       name="returnUrl"
+                                                       value="@returnUrl" />
+
+                                                <button type="submit"
+                                                        class="browse-heart-button"
+                                                        title="Save to Wishlist"
+                                                        aria-label="Save @item.Title to wishlist"
+                                                        aria-pressed="false">
+
+                                                    <!-- Inline SVG: Outline Heart -->
+                                                    <svg viewBox="0 0 24 24"
+                                                         width="29"
+                                                         height="29"
+                                                         xmlns="http://www.w3.org/2000/svg"
+                                                         aria-hidden="true"
+                                                         focusable="false">
+
+                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                                                              fill="none"
+                                                              stroke="#fb7185"
+                                                              stroke-width="2"
+                                                              stroke-linejoin="round" />
+
+                                                    </svg>
+
+                                                </button>
+
+                                            </form>
+                                        }
+                                    }
+
+                                </div>
+
+                                <!-- ========================
+                                     SAVED STATUS LABEL
+                                ========================= -->
+                                @if (isTenant)
+                                {
+                                    <div class="mb-3">
+
+                                        @if (item.IsSavedToWishlist)
+                                        {
+                                            <span class="browse-saved-label">
+                                                <span aria-hidden="true">♥</span>
+                                                Saved to Wishlist
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="browse-not-saved-label">
+                                                Not Saved
+                                            </span>
+                                        }
+
+                                    </div>
+                                }
+
+                                <!-- ========================
+                                     ADDRESS
+                                ========================= -->
+                                <div class="browse-address mb-2">
+
+                                    <strong>Address:</strong>
+                                    @item.Address
+
+                                </div>
+
+                                <!-- ========================
+                                     PROPERTY FACTS
+                                ========================= -->
+                                <div class="browse-facts">
+
+                                    <div class="browse-fact">
+
+                                        <span class="browse-fact-label">
+                                            Property Type
+                                        </span>
+
+                                        <span class="browse-fact-value">
+                                            @item.PropertyType
+                                        </span>
+
+                                    </div>
+
+                                    <div class="browse-fact">
+
+                                        <span class="browse-fact-label">
+                                            Size
+                                        </span>
+
+                                        <span class="browse-fact-value">
+                                            @item.SizeInSqFt.ToString("N0") sqft
+                                        </span>
+
+                                    </div>
+
+                                    <div class="browse-fact">
+
+                                        <span class="browse-fact-label">
+                                            Bedrooms
+                                        </span>
+
+                                        <span class="browse-fact-value">
+                                            @item.Bedrooms
+                                        </span>
+
+                                    </div>
+
+                                    <div class="browse-fact">
+
+                                        <span class="browse-fact-label">
+                                            Bathrooms
+                                        </span>
+
+                                        <span class="browse-fact-value">
+                                            @item.Bathrooms
+                                        </span>
+
+                                    </div>
+
+                                    <div class="browse-fact"
+                                         style="grid-column: 1 / -1;">
+
+                                        <span class="browse-fact-label">
+                                            Furnishing
+                                        </span>
+
+                                        <span class="browse-fact-value">
+
+                                            @(item.IsFurnished
+                                                ? "Furnished"
+                                                : "Unfurnished")
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- ========================
+                                     RENT AND DETAILS
+                                ========================= -->
+                                <div class="browse-price-section">
+
+                                    <div class="browse-price">
+
+                                        ৳@item.MonthlyRent.ToString("N0")
+
+                                        <small>/ month</small>
+
+                                    </div>
+
+                                    <a asp-controller="Properties"
+                                       asp-action="Details"
+                                       asp-route-id="@item.Id"
+                                       class="browse-view-button">
+
+                                        View Property Details
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+
+</div>

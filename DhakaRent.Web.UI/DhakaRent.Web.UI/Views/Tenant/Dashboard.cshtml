@@ -1,0 +1,194 @@
+﻿@{
+    ViewData["Title"] = "Tenant Dashboard";
+}
+
+<div class="container py-4">
+
+    <!-- Dashboard Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold">Tenant Dashboard</h2>
+
+        <p class="text-muted">
+            Welcome to DhakaRent AI!
+            Find and manage your rental home.
+        </p>
+    </div>
+
+    <!-- Dashboard Features -->
+    <div class="row g-4">
+
+        <!-- Browse Properties -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+                    <h5 class="fw-bold">
+                        Browse Properties
+                    </h5>
+
+                    <p class="text-muted">
+                        Explore available rental properties
+                        in Dhaka.
+                    </p>
+
+                    <a asp-controller="Properties"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        Browse Properties
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        
+        <!-- Saved Properties -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold">
+                        Saved Properties
+                    </h5>
+
+                    <p class="text-muted">
+                        View and manage your favorite rental
+                        properties in one place.
+                    </p>
+
+                    <a asp-controller="SavedProperty"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        My Saved Properties
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        
+        <!-- Property Inquiries -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold">
+                        My Inquiries
+                    </h5>
+
+                    <p class="text-muted">
+                        View the inquiries you have sent
+                        to property owners and track
+                        their response status.
+                    </p>
+
+                    
+                    <!-- Tenant Inquiry and Messaging Navigation -->
+                    <div class="d-flex flex-wrap gap-2">
+
+                        <!-- My Inquiries -->
+                        <a asp-controller="PropertyInquiry"
+                           asp-action="Index"
+                           class="btn btn-primary">
+                            My Inquiries
+                        </a>
+
+                        <!-- My Conversations -->
+                        <a asp-controller="Messaging"
+                           asp-action="Index"
+                           class="btn btn-primary">
+                            My Conversations
+                        </a>
+
+                        
+
+
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Viewing Requests -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+                    <h5 class="fw-bold">
+                        Viewing Requests
+                    </h5>
+
+                    <p class="text-muted">
+                        Schedule and manage property
+                        viewing appointments.
+                    </p>
+
+                    <span class="badge bg-secondary">
+
+                        <a asp-controller="ViewingRequest"
+                           asp-action="Index"
+                           class="btn btn-primary">
+                            <i class="bi bi-calendar-check me-1"></i>
+                            My Viewing Requests
+                        </a>
+
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- My Rentals -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+                    <h5 class="fw-bold">
+                        My Rentals
+                    </h5>
+
+                    <p class="text-muted">
+                        View your current rental,
+                        agreement details and rent history.
+                    </p>
+
+                    <span class="badge bg-secondary">
+                        Coming Soon
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Payments -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body p-4">
+                    <h5 class="fw-bold">
+                        Rent & Payments
+                    </h5>
+
+                    <p class="text-muted">
+                        Track monthly rent,
+                        invoices and payments.
+                    </p>
+
+                    <span class="badge bg-secondary">
+                        Coming Soon
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

@@ -1,715 +1,100 @@
-html {
-  font-size: 14px;
+
+/* How-it-works section */
+.dr-how-it-works {
+    padding: 35px 0 65px;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.dr-how-header {
+    margin-bottom: 32px;
+    text-align: center;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
-}
-
-
-/* ===================================
-   DhakaRent AI - Design Theme
-   =================================== */
-
-:root {
-    --dr-primary: #16324F;
-    --dr-accent: #0D9488;
-    --dr-background: #F5F8FC;
-    --dr-text: #334155;
-    --dr-border: #E2E8F0;
-}
-
-/* Global Website Styling */
-body {
-    font-family: "Segoe UI", Arial, sans-serif;
-    background-color: var(--dr-background);
-    color: var(--dr-text);
-}
-
-/* Main Navigation */
-.dr-navbar {
-    background-color: #FFFFFF;
-    border-bottom: 1px solid var(--dr-border);
-    box-shadow: 0 3px 16px rgba(22, 50, 79, 0.06);
-}
-
-    /* Website Brand */
-    .dr-navbar .navbar-brand {
-        color: var(--dr-primary) !important;
-        font-size: 1.45rem;
-        font-weight: 800;
-        letter-spacing: -0.5px;
-    }
-
-    /* Navigation Links */
-    .dr-navbar .nav-link {
-        color: var(--dr-text) !important;
-        font-weight: 500;
-        border-radius: 8px;
-        transition: background-color 0.2s ease, color 0.2s ease;
-    }
-
-        /* Hover and Keyboard Focus */
-        .dr-navbar .nav-link:hover,
-        .dr-navbar .nav-link:focus-visible {
-            color: var(--dr-accent) !important;
-            background-color: #EAF7F5;
-        }
-
-    /* Navbar Spacing */
-    .dr-navbar .container-fluid {
-        padding-left: 24px;
-        padding-right: 24px;
-    }
-
-
-    /* DhakaRent AI - Authentication Navbar Buttons */
-
-    /* Login Button */
-    .dr-navbar .nav-link.dr-login-link {
-        color: var(--dr-primary) !important;
-        border: 1px solid var(--dr-border);
-        border-radius: 10px;
-        padding: 8px 18px;
-        text-align: center;
-        font-weight: 600;
-    }
-
-        .dr-navbar .nav-link.dr-login-link:hover {
-            background-color: #EAF7F5;
-            border-color: var(--dr-accent);
-        }
-
-    /* Register / Get Started Button */
-    .dr-navbar .nav-link.dr-register-link {
-        background-color: var(--dr-primary);
-        color: #FFFFFF !important;
-        border-radius: 10px;
-        padding: 9px 20px;
-        text-align: center;
-        font-weight: 600;
-    }
-
-        .dr-navbar .nav-link.dr-register-link:hover {
-            background-color: var(--dr-accent);
-            color: #FFFFFF !important;
-        }
-
-    /* Logout Button */
-    .dr-navbar .dr-logout-btn {
-        border: 1px solid var(--dr-border);
-        color: var(--dr-text);
-        background-color: #FFFFFF;
-        border-radius: 10px;
-        padding: 8px 18px;
-        font-weight: 600;
-        transition: all 0.2s ease;
-    }
-
-        .dr-navbar .dr-logout-btn:hover {
-            background-color: #FEF2F2;
-            border-color: #DC2626;
-            color: #DC2626;
-        }
-
-
-    /* DhakaRent AI - Active Navigation Link */
-
-    .dr-navbar .nav-link.dr-active-link {
-        color: var(--dr-accent) !important;
-        font-weight: 700;
-        background-color: #EAF7F5;
-        border-radius: 8px;
-    }
-
-        .dr-navbar .nav-link.dr-active-link:hover {
-            color: var(--dr-primary) !important;
-        }
-
-
-    /* ===================================
-   DhakaRent AI - Responsive Navbar
-   =================================== */
-
-    /* Navbar toggle button */
-    .dr-navbar .navbar-toggler {
-        border: 1px solid var(--dr-border);
-        border-radius: 10px;
-        padding: 8px 12px;
-    }
-
-        .dr-navbar .navbar-toggler:focus-visible {
-            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.25);
-        }
-
-/* Mobile and Tablet */
-@media (max-width: 991.98px) {
-
-    .dr-navbar .container-fluid {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-
-    .dr-navbar .navbar-collapse {
-        padding-top: 16px;
-        padding-bottom: 12px;
-    }
-
-    .dr-navbar .navbar-nav {
-        gap: 8px;
-    }
-
-    .dr-navbar .nav-link {
-        padding: 12px 14px;
-    }
-
-        .dr-navbar .nav-link.dr-login-link,
-        .dr-navbar .nav-link.dr-register-link {
-            display: block;
-            text-align: center;
-        }
-
-    .dr-navbar form.d-inline {
-        display: block !important;
-    }
-
-    .dr-navbar .dr-logout-btn {
-        display: block;
-        width: 100%;
-    }
-}
-
-
-/* ===================================
-   DhakaRent AI - Professional Footer
-   =================================== */
-
-.dr-footer {
-    background-color: var(--dr-primary);
-    color: #CBD5E1;
-    padding: 60px 0 24px;
-    margin-top: 60px;
-}
-
-/* Footer Brand */
-.dr-footer-brand {
-    color: #FFFFFF;
-    font-weight: 800;
-    font-size: 1.6rem;
-    margin-bottom: 18px;
-}
-
-/* Footer Descriptions */
-.dr-footer-description {
-    color: #CBD5E1;
-    font-size: 0.95rem;
-    line-height: 1.8;
-    max-width: 370px;
-}
-
-/* Footer Location */
-.dr-footer-location {
-    color: #5EEAD4;
-    font-size: 0.9rem;
-}
-
-/* Section Headings */
-.dr-footer-heading {
-    color: #FFFFFF;
-    font-weight: 700;
-    font-size: 1.05rem;
-    margin-bottom: 20px;
-}
-
-/* Footer Links */
-.dr-footer-links li {
-    margin-bottom: 12px;
-}
-
-.dr-footer-links a {
-    color: #CBD5E1;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-    .dr-footer-links a:hover,
-    .dr-footer-links a:focus-visible {
-        color: #5EEAD4;
-    }
-
-/* Bottom Copyright Section */
-.dr-footer-bottom {
-    border-top: 1px solid #456078;
-    margin-top: 40px;
-    padding-top: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    font-size: 0.85rem;
-}
-
-/* Mobile Responsive Footer */
-@media (max-width: 767.98px) {
-
-    .dr-footer {
-        padding: 40px 0 24px;
-    }
-
-    .dr-footer-bottom {
-        flex-direction: column;
-        text-align: center;
-    }
-}
-
-
-/* ===================================
-   DhakaRent AI - Sticky Footer Fix
-   =================================== */
-
-/* Make the page fill the browser height */
-html {
-    min-height: 100%;
-}
-
-body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Main content takes available space */
-.dr-page-content {
-    flex: 1 0 auto;
-    width: 100%;
-}
-
-/* Footer stays after the main content */
-.dr-footer {
-    flex-shrink: 0;
-    margin-top: 0;
-    position: static;
-}
-
-
-/* =========================================
-   DhakaRent AI - Fixed Viewport Layout
-   ========================================= */
-
-/* Browser viewport */
-html {
+.dr-feature-card {
     height: 100%;
+    padding: 30px 24px;
+    border: 1px solid #e3e5e0;
+    border-radius: 18px;
+    background-color: #ffffff;
+    text-align: center;
+    box-shadow: 0 6px 22px rgba(29, 38, 42, 0.06);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-/* Keep the entire layout inside the screen */
-body {
-    height: 100vh;
-    height: 100dvh;
-    min-height: 0;
-    margin-bottom: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-    /* Navbar stays at the top */
-    body > header {
-        flex-shrink: 0;
+    .dr-feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(29, 38, 42, 0.10);
     }
 
-/* ONLY the main content will scroll */
-.dr-page-content {
-    flex: 1 1 auto;
-    min-height: 0;
-    width: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    overscroll-behavior: contain;
-}
-
-/* Compact footer stays at the bottom */
-.dr-footer {
-    position: relative;
-    flex: 0 0 auto;
-    width: 100%;
-    margin-top: 0;
-    padding: 12px 0;
-    background-color: var(--dr-primary);
-    color: #CBD5E1;
-}
-
-/* Compact one-row layout */
-.dr-footer-inner {
+.dr-feature-icon {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px 20px;
-    font-size: 0.8rem;
-}
-
-/* Footer copyright */
-.dr-footer-copyright {
-    color: #CBD5E1;
-}
-
-/* Footer location */
-.dr-footer .dr-footer-location {
-    color: #5EEAD4;
-    font-size: 0.8rem;
-    margin: 0;
-}
-
-/* Footer quick links */
-.dr-footer-quicklinks {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-    .dr-footer-quicklinks a {
-        color: #CBD5E1;
-        text-decoration: none;
-    }
-
-        .dr-footer-quicklinks a:hover {
-            color: #5EEAD4;
-        }
-
-/* Mobile layout */
-@media (max-width: 767.98px) {
-
-    .dr-footer {
-        padding: 9px 0;
-    }
-
-    .dr-footer-inner {
-        justify-content: center;
-        text-align: center;
-        gap: 6px 14px;
-        font-size: 0.75rem;
-    }
-
-    .dr-footer .dr-footer-location {
-        font-size: 0.75rem;
-    }
-
-    .dr-footer-quicklinks {
-        gap: 12px;
-    }
-}
-
-
-/* ===================================
-   DhakaRent AI - Homepage Hero
-   =================================== */
-
-.dr-hero {
-    background: linear-gradient( 135deg, #16324F 0%, #214F66 60%, #0D6668 100% );
-    color: #FFFFFF;
-    border-radius: 24px;
-    padding: 75px 60px 35px;
-    margin-top: 20px;
-    overflow: hidden;
-}
-
-/* Small Text Above Heading */
-.dr-hero-label {
-    display: inline-block;
-    color: #5EEAD4;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: 20px;
-}
-
-/* Main Heading */
-.dr-hero-title {
-    font-size: clamp(2.3rem, 5vw, 4rem);
+    justify-content: center;
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 20px;
+    border-radius: 17px;
+    background-color: #fff1c9;
+    color: #87670f;
+    font-size: 21px;
     font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: -1.5px;
-    margin-bottom: 24px;
 }
 
-    .dr-hero-title span {
-        color: #5EEAD4;
-    }
-
-/* Description */
-.dr-hero-description {
-    font-size: 1.1rem;
-    color: #CBD5E1;
-    line-height: 1.8;
-    max-width: 650px;
+.dr-feature-card h4 {
+    margin-bottom: 12px;
+    color: #243038;
+    font-size: 19px;
+    font-weight: 700;
 }
 
-/* Primary CTA */
-.dr-hero-primary {
-    background-color: #0D9488;
-    color: #FFFFFF;
-    border-radius: 12px;
-    padding: 14px 28px;
-    font-weight: 600;
+.dr-feature-card p {
+    margin: 0;
+    color: #5c6971;
+    font-size: 15px;
+    line-height: 1.7;
 }
 
-    .dr-hero-primary:hover {
-        background-color: #0F766E;
-        color: #FFFFFF;
-    }
-
-/* Secondary CTA */
-.dr-hero-secondary {
-    border: 1px solid #94A3B8;
-    color: #FFFFFF;
-    border-radius: 12px;
-    padding: 14px 28px;
-    font-weight: 600;
-}
-
-    .dr-hero-secondary:hover {
-        background-color: #FFFFFF;
-        color: #16324F;
-    }
-
-/* Bottom Features */
-.dr-hero-features {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px 28px;
-    border-top: 1px solid #557187;
-    padding-top: 24px;
-    margin-top: 55px;
-    color: #D1FAE5;
-    font-size: 0.9rem;
-}
-
-/* Mobile Responsive Hero */
-@media (max-width: 767.98px) {
+/* Responsive home components */
+@media (max-width: 767px) {
     .dr-hero {
-        padding: 45px 24px 25px;
+        padding: 32px 22px;
         border-radius: 18px;
     }
 
     .dr-hero-title {
-        letter-spacing: -0.5px;
+        font-size: 34px;
+        letter-spacing: -0.3px;
     }
 
     .dr-hero-description {
-        font-size: 1rem;
+        font-size: 16px;
     }
 
     .dr-hero-features {
-        flex-direction: column;
         gap: 12px;
-        margin-top: 35px;
     }
-}
-
-/* ===================================
-   DhakaRent AI - Homepage Search
-   =================================== */
-
-.dr-home-search {
-    padding: 65px 0;
-}
-
-/* Section Heading */
-.dr-home-search-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.dr-section-label {
-    display: block;
-    color: var(--dr-accent);
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: 12px;
-}
-
-.dr-home-search-header h2 {
-    color: var(--dr-primary);
-    font-size: clamp(1.8rem, 3vw, 2.5rem);
-    font-weight: 800;
-    margin-bottom: 12px;
-}
-
-.dr-home-search-header p {
-    color: #64748B;
-    font-size: 1rem;
-}
-
-/* Search Form Container */
-.dr-search-card {
-    background-color: #FFFFFF;
-    padding: 30px;
-    border: 1px solid var(--dr-border);
-    border-radius: 18px;
-    box-shadow: 0 10px 35px rgba(22, 50, 79, 0.07);
-}
-
-    /* Input Labels */
-    .dr-search-card .form-label {
-        font-weight: 600;
-        color: var(--dr-primary);
-        margin-bottom: 8px;
-    }
-
-    /* Inputs */
-    .dr-search-card .form-control {
-        min-height: 50px;
-        border: 1px solid #CBD5E1;
-        border-radius: 10px;
-    }
-
-        .dr-search-card .form-control:focus {
-            border-color: var(--dr-accent);
-            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
-        }
-
-/* Search Button */
-.dr-home-search-btn {
-    min-height: 50px;
-    background-color: var(--dr-accent);
-    color: #FFFFFF;
-    font-weight: 700;
-    border-radius: 10px;
-}
-
-    .dr-home-search-btn:hover {
-        background-color: #0F766E;
-        color: #FFFFFF;
-    }
-
-/* Mobile Responsive */
-@media (max-width: 767.98px) {
 
     .dr-home-search {
-        padding: 45px 0;
+        padding: 40px 0;
+    }
+
+    .dr-home-search-header h2,
+    .dr-how-header h2 {
+        font-size: 27px;
     }
 
     .dr-search-card {
         padding: 20px;
     }
-}
-
-/* ===================================
-   DhakaRent AI - How It Works
-   =================================== */
-
-.dr-how-it-works {
-    padding: 55px 0 80px;
-}
-
-/* Section Heading */
-.dr-how-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-    .dr-how-header h2 {
-        color: var(--dr-primary);
-        font-size: clamp(1.8rem, 3vw, 2.5rem);
-        font-weight: 800;
-        margin-bottom: 14px;
-    }
-
-    .dr-how-header p {
-        color: #64748B;
-        max-width: 650px;
-        margin: 0 auto;
-        line-height: 1.8;
-    }
-
-/* Individual Feature Card */
-.dr-feature-card {
-    background-color: #FFFFFF;
-    border: 1px solid var(--dr-border);
-    border-radius: 18px;
-    padding: 35px 28px;
-    height: 100%;
-    text-align: center;
-    box-shadow: 0 8px 25px rgba(22, 50, 79, 0.05);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-    /* Hover Effect */
-    .dr-feature-card:hover {
-        transform: translateY(-6px);
-        border-color: var(--dr-accent);
-        box-shadow: 0 15px 35px rgba(22, 50, 79, 0.10);
-    }
-
-/* Feature Number */
-.dr-feature-icon {
-    width: 65px;
-    height: 65px;
-    background-color: #EAF7F5;
-    color: var(--dr-accent);
-    border-radius: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    font-weight: 800;
-    margin: 0 auto 25px;
-}
-
-/* Card Heading */
-.dr-feature-card h4 {
-    color: var(--dr-primary);
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 16px;
-}
-
-/* Card Description */
-.dr-feature-card p {
-    color: #64748B;
-    font-size: 0.95rem;
-    line-height: 1.8;
-    margin-bottom: 0;
-}
-
-/* Mobile */
-@media (max-width: 767.98px) {
-
-    .dr-how-it-works {
-        padding: 35px 0 55px;
-    }
 
     .dr-feature-card {
-        padding: 28px 22px;
+        padding: 25px 19px;
+    }
+
+    .dr-how-it-works {
+        padding-bottom: 45px;
     }
 }
 
-/* Respect reduced-motion preferences */
 @media (prefers-reduced-motion: reduce) {
     .dr-feature-card {
         transition: none;

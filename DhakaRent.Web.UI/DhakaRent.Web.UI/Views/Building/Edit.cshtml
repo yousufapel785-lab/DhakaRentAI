@@ -1,0 +1,152 @@
+﻿@model DhakaRent.Web.UI.ViewModels.BuildingFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Building";
+}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-2">Edit Building</h2>
+
+        <p class="text-muted">
+            Update your building information.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <form asp-controller="Building"
+                          asp-action="Edit"
+                          asp-route-id="@ViewContext.RouteData.Values["id"]"
+                          method="post">
+
+                        <!-- General Validation Errors -->
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <!-- Building Name -->
+                        <div class="mb-3">
+                            <label asp-for="Name"
+                                   class="form-label fw-semibold">
+                            </label>
+
+                            <input asp-for="Name"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Name"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mb-3">
+                            <label asp-for="Address"
+                                   class="form-label fw-semibold">
+                            </label>
+
+                            <textarea asp-for="Address"
+                                      class="form-control"
+                                      rows="3"></textarea>
+
+                            <span asp-validation-for="Address"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <!-- Area -->
+                        <div class="mb-3">
+                            <label asp-for="Area"
+                                   class="form-label fw-semibold">
+                            </label>
+
+                            <input asp-for="Area"
+                                   class="form-control" />
+
+                            <span asp-validation-for="Area"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <!-- Optional Map Location -->
+                        <h5 class="fw-semibold mt-4 mb-2">
+                            Map Location (Optional)
+                        </h5>
+
+                        <p class="text-muted small">
+                            Provide both latitude and longitude,
+                            or leave both empty.
+                        </p>
+
+                        <div class="row g-3 mb-4">
+
+                            <!-- Latitude -->
+                            <div class="col-md-6">
+                                <label asp-for="Latitude"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Latitude"
+                                       type="number"
+                                       step="any"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Latitude"
+                                      class="text-danger small">
+                                </span>
+                            </div>
+
+                            <!-- Longitude -->
+                            <div class="col-md-6">
+                                <label asp-for="Longitude"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Longitude"
+                                       type="number"
+                                       step="any"
+                                       class="form-control" />
+
+                                <span asp-validation-for="Longitude"
+                                      class="text-danger small">
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                Save Changes
+                            </button>
+
+                            <a asp-controller="Building"
+                               asp-action="Index"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
