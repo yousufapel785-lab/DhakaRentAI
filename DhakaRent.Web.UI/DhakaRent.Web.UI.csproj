@@ -3,6 +3,8 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <!-- The archived copy nested inside this project must stay outside SDK item discovery. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);DhakaRent.Web.UI/**</DefaultItemExcludes>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>9eec9018-04af-4458-803f-2a1afd6f4a26</UserSecretsId>
