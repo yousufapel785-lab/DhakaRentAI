@@ -1,0 +1,107 @@
+﻿@model DhakaRent.Web.UI.ViewModels.FloorFormViewModel
+
+@{
+    ViewData["Title"] = "Add New Floor";
+
+    int buildingId = (int)ViewBag.BuildingId;
+    string buildingName = (string)ViewBag.BuildingName;
+}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-2">Add New Floor</h2>
+
+        <p class="text-muted mb-0">
+            Building: <strong>@buildingName</strong>
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+
+                    <form asp-controller="Floor"
+                          asp-action="Create"
+                          asp-route-buildingId="@buildingId"
+                          method="post">
+
+                        <!-- General validation errors -->
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <!-- Floor Number -->
+                        <div class="mb-3">
+
+                            <label asp-for="FloorNumber"
+                                   class="form-label fw-semibold">
+                            </label>
+
+                            <input asp-for="FloorNumber"
+                                   type="number"
+                                   step="1"
+                                   required
+                                   class="form-control" />
+
+                            <div class="form-text">
+                                Ground Floor = 0,
+                                First Floor = 1,
+                                Basement = -1.
+                            </div>
+
+                            <span asp-validation-for="FloorNumber"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <!-- Floor Label -->
+                        <div class="mb-4">
+
+                            <label asp-for="Label"
+                                   class="form-label fw-semibold">
+                            </label>
+
+                            <input asp-for="Label"
+                                   class="form-control"
+                                   maxlength="50"
+                                   placeholder="e.g. Ground Floor" />
+
+                            <span asp-validation-for="Label"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-wrap gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                Save Floor
+                            </button>
+
+                            <a asp-controller="Floor"
+                               asp-action="Index"
+                               asp-route-buildingId="@buildingId"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -28,5 +28,11 @@ namespace DhakaRent.Facade.Interfaces
             decimal? maxRent,
             int? bedrooms);
 
+        // Retrieve multiple properties in one database query.
+        // Used for inquiry lists, wishlist and other UI features.
+        Task<IReadOnlyDictionary<int, Property>> GetByIdsAsync(
+            IReadOnlyCollection<int> propertyIds);
+
+
     }
 }

@@ -26,5 +26,10 @@ namespace DhakaRent.Web.UI.ViewModels
         public decimal MonthlyRent { get; set; }
 
         public DateTime? AvailableFrom { get; set; }
+
+        // Indicates whether the logged-in Tenant
+        // has already saved this property to their wishlist.
+        public bool IsSavedToWishlist { get; set; } = false;
+
     }
 }

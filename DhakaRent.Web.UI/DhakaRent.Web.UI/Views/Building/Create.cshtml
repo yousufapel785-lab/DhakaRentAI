@@ -1,0 +1,162 @@
+﻿@model DhakaRent.Web.UI.ViewModels.BuildingFormViewModel
+
+@{
+    ViewData["Title"] = "Add New Building";
+}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-2">Add New Building</h2>
+
+        <p class="text-muted">
+            Add a building to your rental property portfolio.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <form asp-controller="Building"
+                          asp-action="Create"
+                          method="post">
+
+                        <!-- General validation errors -->
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <!-- Building Name -->
+                        <div class="mb-3">
+                            <label asp-for="Name"
+                                   class="form-label fw-semibold">
+                                Building Name
+                            </label>
+
+                            <input asp-for="Name"
+                                   class="form-control"
+                                   placeholder="e.g. Green Tower" />
+
+                            <span asp-validation-for="Name"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mb-3">
+                            <label asp-for="Address"
+                                   class="form-label fw-semibold">
+                                Full Address
+                            </label>
+
+                            <textarea asp-for="Address"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="e.g. House 12, Road 5, Mirpur">
+                            </textarea>
+
+                            <span asp-validation-for="Address"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <!-- Area -->
+                        <div class="mb-3">
+                            <label asp-for="Area"
+                                   class="form-label fw-semibold">
+                                Area
+                            </label>
+
+                            <input asp-for="Area"
+                                   class="form-control"
+                                   placeholder="e.g. Mirpur" />
+
+                            <span asp-validation-for="Area"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <!-- Optional Location Coordinates -->
+                        <h5 class="fw-semibold mt-4 mb-2">
+                            Map Location (Optional)
+                        </h5>
+
+                        <p class="text-muted small">
+                            Provide both latitude and longitude,
+                            or leave both fields empty.
+                        </p>
+
+                        <div class="row g-3 mb-4">
+
+                            <!-- Latitude -->
+                            <div class="col-md-6">
+                                <label asp-for="Latitude"
+                                       class="form-label">
+                                    Latitude
+                                </label>
+
+                                <input asp-for="Latitude"
+                                       type="number"
+                                       step="any"
+                                       class="form-control"
+                                       placeholder="e.g. 23.8000" />
+
+                                <span asp-validation-for="Latitude"
+                                      class="text-danger small">
+                                </span>
+                            </div>
+
+                            <!-- Longitude -->
+                            <div class="col-md-6">
+                                <label asp-for="Longitude"
+                                       class="form-label">
+                                    Longitude
+                                </label>
+
+                                <input asp-for="Longitude"
+                                       type="number"
+                                       step="any"
+                                       class="form-control"
+                                       placeholder="e.g. 90.3600" />
+
+                                <span asp-validation-for="Longitude"
+                                      class="text-danger small">
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                Save Building
+                            </button>
+
+                            <a asp-controller="Building"
+                               asp-action="Index"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,750 @@
+﻿@using DhakaRent.Entities.Enums
+@using DhakaRent.Web.UI.ViewModels
+@model IReadOnlyList<DhakaRent.Entities.Models.ViewingRequest>
+
+@{
+    ViewData["Title"] = "Received Viewing Requests";
+
+    // Bangladesh time zone.
+    var bangladeshTimeZone =
+        TimeZoneInfo.FindSystemTimeZoneById(
+            OperatingSystem.IsWindows()
+                ? "Bangladesh Standard Time"
+                : "Asia/Dhaka");
+
+    // Minimum future date and time in Bangladesh.
+    var bangladeshNow =
+        TimeZoneInfo.ConvertTimeFromUtc(
+            DateTime.UtcNow,
+            bangladeshTimeZone);
+
+    var nextMinute = bangladeshNow.AddMinutes(1);
+
+    var minimumProposedTimeLocal = new DateTime(
+        nextMinute.Year,
+        nextMinute.Month,
+        nextMinute.Day,
+        nextMinute.Hour,
+        nextMinute.Minute,
+        0)
+        .ToString("yyyy-MM-ddTHH:mm");
+
+    // Property information from Controller.
+    var propertyItems =
+        ViewData["ViewingRequestItems"]
+        as IReadOnlyList<ViewingRequestListItemViewModel>;
+
+    // Lookup property details by Viewing Request ID.
+    var propertyItemsByRequestId =
+        (propertyItems ??
+            Array.Empty<ViewingRequestListItemViewModel>())
+        .ToDictionary(item => item.Request.Id);
+}
+
+<style>
+    .owner-viewing-card {
+        border-radius: 16px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .owner-viewing-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.10) !important;
+        }
+
+    .owner-viewing-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.4;
+    }
+
+    .owner-viewing-location {
+        font-size: 14px;
+        color: #64748b;
+        overflow-wrap: anywhere;
+    }
+
+    .owner-viewing-reference {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+    .owner-viewing-info {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 15px;
+        height: 100%;
+    }
+
+    .owner-viewing-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 8px;
+    }
+
+    .owner-viewing-message {
+        overflow-wrap: anywhere;
+        white-space: pre-line;
+        color: #334155;
+        font-size: 14px;
+    }
+
+    .owner-viewing-status {
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .owner-viewing-actions {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+    }
+
+    .owner-viewing-action-section {
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+        .owner-viewing-action-section:last-child {
+            padding-bottom: 0;
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+
+    .owner-viewing-card .btn {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .owner-viewing-card .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .owner-viewing-card .btn:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: 2px;
+        }
+
+    @@media (max-width: 767px) {
+        .owner-viewing-title {
+            font-size: 18px;
+        }
+
+        .owner-viewing-card .card-body {
+            padding: 18px !important;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .owner-viewing-card,
+        .owner-viewing-card .btn {
+            transition: none;
+        }
+
+            .owner-viewing-card:hover,
+            .owner-viewing-card .btn:hover {
+                transform: none;
+            }
+    }
+</style>
+
+<div class="container py-4">
+
+    <!-- Success Notification -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show"
+             role="alert">
+
+            <i class="bi bi-check-circle me-2"></i>
+            @TempData["SuccessMessage"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
+        </div>
+    }
+
+    <!-- Error Notification -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show"
+             role="alert">
+
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            @TempData["ErrorMessage"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
+        </div>
+    }
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between
+        align-items-center flex-wrap gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-calendar-check me-2"></i>
+                Received Viewing Requests
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage viewing appointments for your properties.
+            </p>
+        </div>
+
+        <a asp-controller="PropertyOwner"
+           asp-action="Dashboard"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Dashboard
+        </a>
+    </div>
+
+    @if (Model == null || Model.Count == 0)
+    {
+        <!-- Empty State -->
+        <div class="card shadow-sm border-0 rounded-4">
+
+            <div class="card-body text-center py-5">
+
+                <i class="bi bi-calendar-x fs-1 text-secondary"></i>
+
+                <h4 class="mt-3">
+                    No Viewing Requests Yet
+                </h4>
+
+                <p class="text-muted">
+                    You have not received any property
+                    viewing requests yet.
+                </p>
+
+                <a asp-controller="PropertyOwner"
+                   asp-action="Dashboard"
+                   class="btn btn-primary">
+                    Back to Dashboard
+                </a>
+
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Request Count -->
+        <div class="alert alert-info d-flex
+            align-items-center gap-2 mb-4">
+
+            <i class="bi bi-info-circle"></i>
+
+            <span>
+                <strong>Total Received Requests:</strong>
+                @Model.Count
+            </span>
+        </div>
+
+        <!-- Viewing Request Cards -->
+        @foreach (var request in Model)
+        {
+            // Find actual property information.
+            propertyItemsByRequestId.TryGetValue(
+                request.Id,
+                out var propertyItem);
+
+            // Convert original requested time to BDT.
+            var requestedLocal =
+                TimeZoneInfo.ConvertTimeFromUtc(
+                    DateTime.SpecifyKind(
+                        request.RequestedDateTime,
+                        DateTimeKind.Utc),
+                    bangladeshTimeZone);
+
+            // Convert proposed time to BDT.
+            DateTime? proposedLocal = null;
+
+            if (request.ProposedDateTime.HasValue)
+            {
+                proposedLocal =
+                    TimeZoneInfo.ConvertTimeFromUtc(
+                        DateTime.SpecifyKind(
+                            request.ProposedDateTime.Value,
+                            DateTimeKind.Utc),
+                        bangladeshTimeZone);
+            }
+
+            // Convert submission time to BDT.
+            var createdLocal =
+                TimeZoneInfo.ConvertTimeFromUtc(
+                    DateTime.SpecifyKind(
+                        request.CreatedAt,
+                        DateTimeKind.Utc),
+                    bangladeshTimeZone);
+
+            // Status styling.
+            string statusClass = request.Status switch
+            {
+                ViewingRequestStatus.Pending
+                    => "bg-warning text-dark",
+
+                ViewingRequestStatus.Accepted
+                    => "bg-success",
+
+                ViewingRequestStatus.Rejected
+                    => "bg-danger",
+
+                ViewingRequestStatus.RescheduleRequested
+                    => "bg-info text-dark",
+
+                ViewingRequestStatus.Cancelled
+                    => "bg-secondary",
+
+                ViewingRequestStatus.Completed
+                    => "bg-primary",
+
+                _ => "bg-secondary"
+            };
+
+            // Owner action permissions.
+            bool canAccept =
+                request.Status == ViewingRequestStatus.Pending &&
+                request.RequestedDateTime > DateTime.UtcNow;
+
+            bool canReject =
+                request.Status == ViewingRequestStatus.Pending;
+
+            bool canProposeReschedule =
+                request.Status == ViewingRequestStatus.Pending;
+
+            // Use proposed time if tenant accepted it.
+            DateTime confirmedViewingTimeUtc =
+                request.ProposedDateTime
+                ?? request.RequestedDateTime;
+
+            bool canComplete =
+                request.Status == ViewingRequestStatus.Accepted &&
+                confirmedViewingTimeUtc <= DateTime.UtcNow;
+
+            bool hasAvailableAction =
+                canAccept ||
+                canReject ||
+                canProposeReschedule ||
+                canComplete;
+
+            <div class="card border-0 shadow-sm
+                owner-viewing-card mb-4">
+
+                <div class="card-body p-4">
+
+                    <!-- Property Header -->
+                    <div class="d-flex justify-content-between
+                        align-items-start flex-wrap
+                        gap-3 mb-4">
+
+                        <div>
+
+                            <!-- Actual Property Title -->
+                            <div class="owner-viewing-title mb-2">
+                                @(propertyItem?.PropertyTitle
+                                    ?? "Property unavailable")
+                            </div>
+
+                            <!-- Property Area -->
+                            @if (!string.IsNullOrWhiteSpace(
+                                propertyItem?.PropertyArea))
+                            {
+                                <div class="owner-viewing-location mb-1">
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    @propertyItem.PropertyArea
+                                </div>
+                            }
+
+                            <!-- Property Address -->
+                            @if (!string.IsNullOrWhiteSpace(
+                                propertyItem?.PropertyAddress))
+                            {
+                                <div class="owner-viewing-location mb-2">
+                                    <i class="bi bi-house-door me-1"></i>
+                                    @propertyItem.PropertyAddress
+                                </div>
+                            }
+
+                            <!-- Internal Reference -->
+                            <div class="owner-viewing-reference mb-2">
+                                Request #@request.Id
+                                <span class="mx-1">·</span>
+                                Property #@request.PropertyId
+                            </div>
+
+                            <!-- View Public Property -->
+                            @if (propertyItem?.CanViewPropertyDetails == true)
+                            {
+                                <a asp-controller="Properties"
+                                   asp-action="Details"
+                                   asp-route-id="@request.PropertyId"
+                                   class="btn btn-sm btn-outline-primary">
+
+                                    <i class="bi bi-eye me-1"></i>
+                                    View Property
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">
+                                    Public listing unavailable
+                                </span>
+                            }
+                        </div>
+
+                        <!-- Status Badge -->
+                        <span class="badge owner-viewing-status
+                            @statusClass">
+                            @request.Status
+                        </span>
+
+                    </div>
+
+                    <div class="row g-4">
+
+                        <!-- Request Information -->
+                        <div class="col-lg-7">
+
+                            <div class="row g-3">
+
+                                <!-- Requested Date and Time -->
+                                <div class="col-md-6">
+                                    <div class="owner-viewing-info">
+
+                                        <div class="owner-viewing-label">
+                                            <i class="bi bi-calendar-event me-1"></i>
+                                            Requested Viewing
+                                        </div>
+
+                                        <div class="fw-semibold">
+                                            @requestedLocal.ToString(
+                                                "dd MMM yyyy")
+                                        </div>
+
+                                        <div class="text-muted small mt-1">
+                                            <i class="bi bi-clock me-1"></i>
+                                            @requestedLocal.ToString(
+                                                "hh:mm tt") (BDT)
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Proposed Date and Time -->
+                                <div class="col-md-6">
+                                    <div class="owner-viewing-info">
+
+                                        <div class="owner-viewing-label">
+                                            <i class="bi bi-calendar-plus me-1"></i>
+                                            Proposed Viewing
+                                        </div>
+
+                                        @if (proposedLocal.HasValue)
+                                        {
+                                            <div class="fw-semibold">
+                                                @proposedLocal.Value.ToString(
+                                                    "dd MMM yyyy")
+                                            </div>
+
+                                            <div class="text-muted small mt-1">
+                                                <i class="bi bi-clock me-1"></i>
+                                                @proposedLocal.Value.ToString(
+                                                    "hh:mm tt") (BDT)
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Not proposed
+                                            </span>
+                                        }
+
+                                    </div>
+                                </div>
+
+                                <!-- Tenant Message -->
+                                <div class="col-md-12">
+                                    <div class="owner-viewing-info">
+
+                                        <div class="owner-viewing-label">
+                                            <i class="bi bi-chat-left-text me-1"></i>
+                                            Tenant Message
+                                        </div>
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            request.TenantMessage))
+                                        {
+                                            <div class="owner-viewing-message">
+                                                @request.TenantMessage
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                No message
+                                            </span>
+                                        }
+
+                                    </div>
+                                </div>
+
+                                <!-- Owner Response -->
+                                <div class="col-md-12">
+                                    <div class="owner-viewing-info">
+
+                                        <div class="owner-viewing-label">
+                                            <i class="bi bi-reply me-1"></i>
+                                            Owner Response
+                                        </div>
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            request.OwnerResponse))
+                                        {
+                                            <div class="owner-viewing-message">
+                                                @request.OwnerResponse
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                No response yet
+                                            </span>
+                                        }
+
+                                    </div>
+                                </div>
+
+                                <!-- Submitted Time -->
+                                <div class="col-md-12">
+
+                                    <div class="small text-muted">
+                                        <i class="bi bi-clock-history me-1"></i>
+
+                                        Submitted:
+                                        @createdLocal.ToString(
+                                            "dd MMM yyyy, hh:mm tt")
+                                        (BDT)
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Owner Action Panel -->
+                        <div class="col-lg-5">
+
+                            <div class="owner-viewing-actions">
+
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-gear me-1"></i>
+                                    Manage Viewing Request
+                                </h6>
+
+                                @if (canAccept)
+                                {
+                                    <div class="owner-viewing-action-section">
+
+                                        <!-- Accept Form -->
+                                        <form asp-controller="OwnerViewingRequest"
+                                              asp-action="Accept"
+                                              method="post"
+                                              onsubmit="return confirm('Accept this viewing request?');">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="requestId"
+                                                   value="@request.Id" />
+
+                                            <label class="form-label small fw-semibold"
+                                                   for="acceptResponse_@request.Id">
+                                                Acceptance Message (Optional)
+                                            </label>
+
+                                            <textarea name="ownerResponse"
+                                                      id="acceptResponse_@request.Id"
+                                                      class="form-control form-control-sm mb-2"
+                                                      rows="2"
+                                                      maxlength="1000"
+                                                      placeholder="Your viewing is confirmed."></textarea>
+
+                                            <button type="submit"
+                                                    class="btn btn-success btn-sm w-100">
+
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Accept Request
+                                            </button>
+
+                                        </form>
+                                    </div>
+                                }
+
+                                @if (canProposeReschedule)
+                                {
+                                    <div class="owner-viewing-action-section">
+
+                                        <!-- Reschedule Form -->
+                                        <form asp-controller="OwnerViewingRequest"
+                                              asp-action="ProposeReschedule"
+                                              method="post"
+                                              onsubmit="return confirm('Send this alternative time to the tenant?');">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="requestId"
+                                                   value="@request.Id" />
+
+                                            <label class="form-label small fw-semibold"
+                                                   for="proposedDateTime_@request.Id">
+                                                Alternative Date &amp; Time (BDT)
+                                            </label>
+
+                                            <input type="datetime-local"
+                                                   id="proposedDateTime_@request.Id"
+                                                   name="proposedDateTimeLocal"
+                                                   class="form-control form-control-sm mb-2"
+                                                   min="@minimumProposedTimeLocal"
+                                                   step="60"
+                                                   required />
+
+                                            <div class="form-text mb-2">
+                                                Choose a future time different
+                                                from the original request.
+                                            </div>
+
+                                            <label class="form-label small fw-semibold"
+                                                   for="rescheduleResponse_@request.Id">
+                                                Reschedule Message (Optional)
+                                            </label>
+
+                                            <textarea name="ownerResponse"
+                                                      id="rescheduleResponse_@request.Id"
+                                                      class="form-control form-control-sm mb-2"
+                                                      rows="2"
+                                                      maxlength="1000"
+                                                      placeholder="Can we meet at this time instead?"></textarea>
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-primary btn-sm w-100">
+
+                                                <i class="bi bi-calendar-plus me-1"></i>
+                                                Propose New Time
+                                            </button>
+
+                                        </form>
+                                    </div>
+                                }
+
+                                @if (canReject)
+                                {
+                                    <div class="owner-viewing-action-section">
+
+                                        <!-- Reject Form -->
+                                        <form asp-controller="OwnerViewingRequest"
+                                              asp-action="Reject"
+                                              method="post"
+                                              onsubmit="return confirm('Reject this viewing request?');">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="requestId"
+                                                   value="@request.Id" />
+
+                                            <label class="form-label small fw-semibold"
+                                                   for="rejectResponse_@request.Id">
+                                                Rejection Reason (Optional)
+                                            </label>
+
+                                            <textarea name="ownerResponse"
+                                                      id="rejectResponse_@request.Id"
+                                                      class="form-control form-control-sm mb-2"
+                                                      rows="2"
+                                                      maxlength="1000"
+                                                      placeholder="Reason for rejecting the request."></textarea>
+
+                                            <button type="submit"
+                                                    class="btn btn-outline-danger btn-sm w-100">
+
+                                                <i class="bi bi-x-circle me-1"></i>
+                                                Reject Request
+                                            </button>
+
+                                        </form>
+                                    </div>
+                                }
+
+                                @if (canComplete)
+                                {
+                                    <div class="owner-viewing-action-section">
+
+                                        <!-- Complete Form -->
+                                        <form asp-controller="OwnerViewingRequest"
+                                              asp-action="Complete"
+                                              method="post"
+                                              onsubmit="return confirm('Has this property viewing actually been completed?');">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="requestId"
+                                                   value="@request.Id" />
+
+                                            <button type="submit"
+                                                    class="btn btn-primary btn-sm w-100">
+
+                                                <i class="bi bi-check2-all me-1"></i>
+                                                Mark as Completed
+                                            </button>
+
+                                        </form>
+                                    </div>
+                                }
+
+                                @if (!hasAvailableAction)
+                                {
+                                    <div class="text-center py-3">
+
+                                        <i class="bi bi-info-circle
+                                        text-secondary fs-4"></i>
+
+                                        <p class="text-muted small mt-2 mb-0">
+                                            No available action
+                                            for this request.
+                                        </p>
+
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        }
+    }
+
+</div>
