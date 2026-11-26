@@ -1,235 +1,79 @@
-﻿@{
-    var currentController =
-        ViewContext.RouteData.Values["controller"]?.ToString();
-
-    var currentAction =
-        ViewContext.RouteData.Values["action"]?.ToString();
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var links = new List<(string Text, string Controller, string Action, bool Current)>
+    {
+        ("Home", "Home", "Index", controller == "Home" && action == "Index"),
+        ("Browse properties", "Properties", "Index", controller == "Properties")
+    };
+    if (User.IsInRole("Admin"))
+    {
+        links.Add(("Dashboard", "Admin", "Dashboard", controller == "Admin" && action == "Dashboard"));
+        links.Add(("Review queue", "Admin", "PendingProperties", controller == "Admin" && action != "Dashboard"));
+    }
+    else if (User.IsInRole("PropertyOwner"))
+    {
+        links.Add(("My listings", "PropertyOwner", "Dashboard", controller == "PropertyOwner"));
+        links.Add(("My buildings", "Building", "Index", controller is "Building" or "Floor" or "RentalUnit"));
+    }
+    else if (User.IsInRole("Tenant"))
+    {
+        links.Add(("My dashboard", "Tenant", "Dashboard", controller == "Tenant"));
+    }
 }
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - DhakaRent AI</title>
-    <script type="importmap"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · DhakaRent AI</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/DhakaRent.Web.UI.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-
-        
-        <nav class="navbar navbar-expand-lg navbar-light dr-navbar mb-3">
-
-
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DhakaRent AI</a>
-
-                <button class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#drNavbarMenu"
-                        aria-controls="drNavbarMenu"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation">
-
-                    <span class="navbar-toggler-icon"></span>
-
-                </button>
-
-
-                
-                <div class="collapse navbar-collapse justify-content-between"
-                     id="drNavbarMenu">
-
-
-                    <!-- Left Side: Main Navigation -->
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-
-                            <a class="nav-link @(currentController == "Home" &&
-                                                 currentAction == "Index"
-                                                 ? "dr-active-link" : "")"
-                               asp-controller="Home"
-                               asp-action="Index">
-                                Home
-                            </a>
-
-                        </li>
-
-                        
-                        <li class="nav-item">
-
-                            <a class="nav-link @(currentController == "Properties"
-                                                 ? "dr-active-link" : "")"
-                               asp-controller="Properties"
-                               asp-action="Index">
-                                Browse Properties
-                            </a>
-
-                        </li>
-
-
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-controller="Home"
-                               asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-
-                    <!-- Right Side: Authentication Navigation -->
-                    <ul class="navbar-nav">
-
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-
-                            @* Role-Based Dashboard Navigation *@
-
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       asp-controller="Admin"
-                                       asp-action="Dashboard">
-                                        Admin Dashboard
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       asp-controller="Admin"
-                                       asp-action="PendingProperties">
-                                        Pending Properties
-                                    </a>
-                                </li>
-
-                            }
-                            else if (User.IsInRole("PropertyOwner"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       asp-controller="PropertyOwner"
-                                       asp-action="Dashboard">
-                                        Owner Dashboard
-                                    </a>
-                                </li>
-                            }
-                            else if (User.IsInRole("Tenant"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       asp-controller="Tenant"
-                                       asp-action="Dashboard">
-                                        Tenant Dashboard
-                                    </a>
-                                </li>
-                            }
-
-                            <li class="nav-item">
-                                <span class="nav-link text-dark">
-                                    Hello, @User.Identity.Name
-                                </span>
-                            </li>
-
-                            <li class="nav-item">
-                                <form asp-controller="Account"
-                                      asp-action="Logout"
-                                      method="post"
-                                      class="d-inline">
-
-                                    @Html.AntiForgeryToken()
-
-                                    
-                                    <button type="submit"
-                                            class="btn dr-logout-btn">
-                                        Logout
-                                    </button>
-
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-
-                            <li class="nav-item">
-                                <a class="nav-link dr-login-link"
-                                   asp-controller="Account"
-                                   asp-action="Login">
-                                    Login
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link dr-register-link"
-                                   asp-controller="Account"
-                                   asp-action="Register">
-                                    Get Started
-                                </a>
-                            </li>
-
-
-                        }
-
-                    </ul>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <header class="site-header">
+        <nav class="container navbar navbar-expand-lg navbar-light" aria-label="Main navigation">
+            <a class="wordmark" asp-controller="Home" asp-action="Index" aria-label="DhakaRent AI home">
+                <span class="brand-mark"><img src="~/icons/building-2.svg" width="23" height="23" alt="" /></span>
+                <span>DhakaRent <small>AI</small></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navigation"
+                    aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div id="navigation" class="collapse navbar-collapse">
+                <div class="navbar-nav site-links">
+                    @foreach (var link in links)
+                    {
+                        <a class="nav-link @(link.Current ? "selected" : "")" aria-current="@(link.Current ? "location" : null)"
+                           asp-controller="@link.Controller" asp-action="@link.Action">@link.Text</a>
+                    }
                 </div>
-
+                <div class="account-links">
+                    @if (signedIn)
+                    {
+                        <span class="account-name">@User.Identity?.Name</span>
+                        <form asp-controller="Account" asp-action="Logout" method="post"><button class="btn btn-outline-secondary">Log out</button></form>
+                    }
+                    else
+                    {
+                        <a class="login-link" asp-controller="Account" asp-action="Login">Log in</a>
+                        <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Create account</a>
+                    }
+                </div>
             </div>
         </nav>
     </header>
-    <div class="container dr-page-content">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    
-
-    <!-- DhakaRent AI - Compact Fixed Footer -->
-    <footer class="dr-footer">
-
-        <div class="container">
-
-            <div class="dr-footer-inner">
-
-                <span class="dr-footer-copyright">
-                    &copy; @DateTime.Now.Year DhakaRent AI
-                </span>
-
-                <span class="dr-footer-location">
-                    Dhaka, Bangladesh
-                </span>
-
-                <div class="dr-footer-quicklinks">
-
-                    <a asp-controller="Home"
-                       asp-action="Index">
-                        Home
-                    </a>
-
-                    <a asp-controller="Properties"
-                       asp-action="Index">
-                        Properties
-                    </a>
-
-                    <a asp-controller="Home"
-                       asp-action="Privacy">
-                        Privacy
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </footer>
-
-
+    <main id="content" tabindex="-1" class="container page-content" data-section="@controller">
+        @RenderBody()
+    </main>
+    <footer class="site-footer"><div class="container footer-row">
+        <span>© @DateTime.Now.Year DhakaRent AI</span>
+        <span class="footer-place">Dhaka, Bangladesh</span>
+        <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div></footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

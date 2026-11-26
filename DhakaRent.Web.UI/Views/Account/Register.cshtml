@@ -11,9 +11,9 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
 
-                    <h2 class="text-center mb-2">
-                        Create Your Account
-                    </h2>
+                    <h1 class="h2 text-center mb-2">
+                        Create your account
+                    </h1>
 
                     <p class="text-center text-muted mb-4">
                         Join DhakaRent AI and find your ideal home.
@@ -33,7 +33,7 @@
                             <label asp-for="FullName"
                                    class="form-label"></label>
 
-                            <input asp-for="FullName"
+                            <input asp-for="FullName" autocomplete="name"
                                    class="form-control"
                                    placeholder="Enter your full name" />
 
@@ -59,7 +59,7 @@
                             <label asp-for="Email"
                                    class="form-label"></label>
 
-                            <input asp-for="Email"
+                            <input asp-for="Email" autocomplete="username"
                                    class="form-control"
                                    placeholder="Enter your email address" />
 
@@ -72,7 +72,7 @@
                             <label asp-for="Password"
                                    class="form-label"></label>
 
-                            <input asp-for="Password"
+                            <input asp-for="Password" autocomplete="new-password"
                                    class="form-control"
                                    placeholder="Create a password" />
 
@@ -85,7 +85,7 @@
                             <label asp-for="ConfirmPassword"
                                    class="form-label"></label>
 
-                            <input asp-for="ConfirmPassword"
+                            <input asp-for="ConfirmPassword" autocomplete="new-password"
                                    class="form-control"
                                    placeholder="Confirm your password" />
 
